@@ -112,7 +112,6 @@
       collapsible
       resizable
       class="bg-elevated/25"
-      :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
       <template #default="{ collapsed }">
         <UNavigationMenu
@@ -133,10 +132,17 @@
       </template>
     </UDashboardSidebar>
 
-    <UMain class="w-full">
-      <UContainer class="h-full">
-        <slot />
-      </UContainer>
+    <UMain class="h-full w-full">
+      <slot />
     </UMain>
+
+    <UDashboardSidebar
+      id="palette"
+      side="right"
+      resizable
+      class="bg-elevated/25"
+    >
+      <NodePalette />
+    </UDashboardSidebar>
   </UDashboardGroup>
 </template>
