@@ -94,32 +94,12 @@
     ]
   ] satisfies NavigationMenuItem[][]
 
-  const groups = computed(() => [
-    {
-      id: 'links',
-      label: 'Go to',
-      items: links.flat()
-    },
-    {
-      id: 'code',
-      label: 'Code',
-      items: [
-        {
-          id: 'source',
-          label: 'View page source',
-          icon: 'i-simple-icons-github',
-          to: `https://github.com/nuxt-ui-templates/dashboard/blob/main/app/pages${route.path === '/' ? '/index' : route.path}.vue`,
-          target: '_blank'
-        }
-      ]
-    }
-  ])
-
   onMounted(async () => {
     toast.add({
       title: 'Welcome to the Upsell Funnel Builder. ',
       duration: 2000,
-      close: false
+      close: false,
+      icon: 'i-lucide-sparkles'
     })
   })
 </script>
