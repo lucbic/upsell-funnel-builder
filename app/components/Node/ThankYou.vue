@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { NodeProps } from '@vue-flow/core'
+  import type { NodeProps } from '@vue-flow/core'
 
-defineProps<NodeProps<Funnel.NodeData>>()
+  defineProps<NodeProps<Funnel.NodeData>>()
 </script>
 
 <template>
-  <NodesBaseNode
+  <NodeBase
     v-bind="$props"
     accent-color="text-emerald-400"
   />
