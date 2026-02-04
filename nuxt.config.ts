@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@nuxt/test-utils',
     '@nuxt/ui',
-    '@nuxt/fonts'
+    '@nuxt/fonts',
+    '@pinia/nuxt'
   ],
 
   ssr: false,
