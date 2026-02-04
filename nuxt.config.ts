@@ -11,6 +11,8 @@ export default defineNuxtConfig({
     '@nuxt/fonts'
   ],
 
+  ssr: false,
+
   css: ['~/assets/css/main.css'],
 
   typescript: {
