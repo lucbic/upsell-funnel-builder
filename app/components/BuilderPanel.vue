@@ -4,7 +4,11 @@
   import '@vue-flow/core/dist/theme-default.css'
 
   import { VueFlow, useVueFlow } from '@vue-flow/core'
-  import type { Connection } from '@vue-flow/core'
+  import type {
+    Connection,
+    NodeChange,
+    Node
+  } from '@vue-flow/core'
   import { Background as VFBackground } from '@vue-flow/background'
   import { Controls as VFControls } from '@vue-flow/controls'
 
@@ -28,6 +32,26 @@
 
     store.addEdge(connection)
   })
+
+  const onNodesChange = (changes: NodeChange[]) => {
+    for (const change of changes) {
+      if (change.type === 'remove') {
+        const removeChange = change as {
+          type: 'remove'
+          id: string
+        }
+        if (removeChange.id) {
+          store.deleteNode(removeChange.id)
+        }
+      }
+    }
+  }
+
+  const onNodesDelete = (nodes: Node[]) => {
+    nodes.forEach(node => {
+      store.deleteNode(node.id)
+    })
+  }
 
   const onDragOver = (event: DragEvent) => {
     event.preventDefault()
@@ -64,6 +88,8 @@
     class="h-full w-full"
     @dragover="onDragOver"
     @drop="onDrop"
+    @nodes-change="onNodesChange"
+    @nodes-delete="onNodesDelete"
   >
     <template #node-sales-page="props">
       <NodeSalesPage v-bind="props" />
