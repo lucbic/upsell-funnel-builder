@@ -2,14 +2,11 @@
 
 <template>
   <div
-    class="flex h-full flex-col items-center justify-center"
+    class="flex h-full flex-col items-center justify-center
+      gap-8 py-20"
   >
-    <UCard class="my-24 h-full w-full">
-      <template #header>
-        <H1> Upsell Funnel Builder </H1>
-      </template>
+    <h1>Upsell Funnel Builder</h1>
 
-      <Placeholder class="h-32" />
-    </UCard>
+    <BuilderPanel />
   </div>
 </template>
