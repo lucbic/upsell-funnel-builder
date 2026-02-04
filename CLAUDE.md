@@ -71,6 +71,23 @@ bun run typecheck
 - Use template syntax for declarative rendering
 - Use `<script setup>` syntax for concise component definitions
 
+### TypeScript Guidelines
+
+- Prefer `type` over `interface` for type definitions
+- Type modules should be located at `./types/[module-name].ts`
+- Every type module should be declared in the global domain using a simple CamelCase namespace
+- Example structure:
+  ```typescript
+  // types/myModule.ts
+  declare global {
+    namespace MyModule {
+      type User = { id: string; name: string }
+      type Config = { /* ... */ }
+    }
+  }
+  export {}
+  ```
+
 ### Vue 3 and Composition API Best Practices
 
 - All composables and vue functions are auto-imported by Nuxt. No need to import them manually.
@@ -89,6 +106,7 @@ bun run typecheck
 - **SCSS Usage**: Only use SCSS when strictly necessary or beneficial (e.g., complex styling for nested elements)
 - Custom color classes are available in Tailwind config.
 - Custom css variables are available in `app/assets/css/modules/_variables.scss`
+- **For medium to complex UI changes**: Use the `mcp__nuxt-ui-remote__list-components` tool to discover and select appropriate Nuxt UI components before implementation
 
 ### HTML Templating Conventions
 
