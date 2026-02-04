@@ -114,10 +114,6 @@
       class="bg-elevated/25"
       :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
-      <template #header="{ collapsed }">
-        <LayoutCartpandaLogo />
-      </template>
-
       <template #default="{ collapsed }">
         <UNavigationMenu
           :collapsed="collapsed"
@@ -137,6 +133,10 @@
       </template>
     </UDashboardSidebar>
 
-    <slot />
+    <UMain class="w-full">
+      <UContainer class="h-full">
+        <slot />
+      </UContainer>
+    </UMain>
   </UDashboardGroup>
 </template>
