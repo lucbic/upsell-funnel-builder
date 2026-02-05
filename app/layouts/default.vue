@@ -107,10 +107,24 @@
 <template>
   <UDashboardGroup unit="rem">
     <UDashboardSidebar
+      id="palette"
+      side="left"
+      resizable
+      class="bg-elevated/25"
+    >
+      <NodePalette />
+    </UDashboardSidebar>
+
+    <UMain class="h-full w-full">
+      <slot />
+    </UMain>
+
+    <UDashboardSidebar
       id="default"
       v-model:open="open"
       collapsible
       resizable
+      side="right"
       class="bg-elevated/25"
     >
       <template #default="{ collapsed }">
@@ -130,19 +144,6 @@
           class="mt-auto"
         />
       </template>
-    </UDashboardSidebar>
-
-    <UMain class="h-full w-full">
-      <slot />
-    </UMain>
-
-    <UDashboardSidebar
-      id="palette"
-      side="right"
-      resizable
-      class="bg-elevated/25"
-    >
-      <NodePalette />
     </UDashboardSidebar>
   </UDashboardGroup>
 </template>
