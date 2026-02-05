@@ -1,7 +1,7 @@
 import type { Node, Edge, Connection } from '@vue-flow/core'
-import { NODE_TYPE_CONFIG } from '~/utils/funnelConfig'
 
-export const useFunnelBuilderStore = defineStore('funnelBuilder', () => {
+export const useFunnel = defineStore('funnel', () => {
+  const nodeTypeConfig = useNodeTypeConfig()
   const nodes = ref<Node<Funnel.NodeData>[]>([])
   const edges = ref<Edge[]>([])
 
@@ -12,8 +12,14 @@ export const useFunnelBuilderStore = defineStore('funnelBuilder', () => {
 
   let nodeIdCounter = 0
 
-  const createNode = (type: Funnel.NodeType, position: { x: number, y: number }) => {
-    const config = NODE_TYPE_CONFIG[type]
+  const createNode = (
+    type: Funnel.NodeType,
+    position: { x: number; y: number }
+  ) => {
+    const config = nodeTypeConfig[type]
+
+    if (!config) return
+
     nodeIdCounter++
 
     let title = config.defaultTitle
@@ -40,28 +46,36 @@ export const useFunnelBuilderStore = defineStore('funnelBuilder', () => {
     }
 
     nodes.value.push(newNode)
-    return newNode
   }
 
-  const validateConnection = (connection: Connection): boolean => {
-    const sourceNode = nodes.value.find(n => n.id === connection.source)
+  const validateConnection = (
+    connection: Connection
+  ): boolean => {
+    const sourceNode = nodes.value.find(
+      n => n.id === connection.source
+    )
     if (!sourceNode) return false
 
     // No self-connections
-    if (connection.source === connection.target) return false
+    if (connection.source === connection.target)
+      return false
 
     // Thank You cannot have outgoing edges
     if (sourceNode.type === 'thank-you') return false
 
     // Sales Page max 1 outgoing edge
     if (sourceNode.type === 'sales-page') {
-      const existingEdges = edges.value.filter(e => e.source === sourceNode.id)
+      const existingEdges = edges.value.filter(
+        e => e.source === sourceNode.id
+      )
       if (existingEdges.length >= 1) return false
     }
 
     // No duplicate edges
     const duplicate = edges.value.find(
-      e => e.source === connection.source && e.target === connection.target
+      e =>
+        e.source === connection.source &&
+        e.target === connection.target
     )
     if (duplicate) return false
 
@@ -87,8 +101,9 @@ export const useFunnelBuilderStore = defineStore('funnelBuilder', () => {
     if (!node) return
 
     const nodeType = node.type as Funnel.NodeType
-    if (NODE_TYPE_CONFIG[nodeType]?.autoIncrement) {
-      nodeTypeCounts.value[nodeType] = (nodeTypeCounts.value[nodeType] ?? 1) - 1
+    if (nodeTypeConfig[nodeType]?.autoIncrement) {
+      nodeTypeCounts.value[nodeType] =
+        (nodeTypeCounts.value[nodeType] ?? 1) - 1
     }
 
     edges.value = edges.value.filter(

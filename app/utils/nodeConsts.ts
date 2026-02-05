@@ -1,4 +1,12 @@
-export const NODE_TYPE_CONFIG: Record<Funnel.NodeType, Funnel.NodeTypeConfig> = {
+export const useNodeSizes = () => ({
+  NODE_WIDTH: 200,
+  NODE_HEIGHT: 75
+})
+
+export const useNodeTypeConfig = (): Record<
+  Funnel.NodeType,
+  Funnel.NodeTypeConfig
+> => ({
   'sales-page': {
     label: 'Sales Page',
     icon: 'i-lucide-presentation',
@@ -14,7 +22,7 @@ export const NODE_TYPE_CONFIG: Record<Funnel.NodeType, Funnel.NodeTypeConfig> = 
     defaultTitle: 'Order Page',
     allowsOutgoing: true
   },
-  'upsell': {
+  upsell: {
     label: 'Upsell',
     icon: 'i-lucide-trending-up',
     defaultButtonLabel: 'Yes, Add This',
@@ -22,7 +30,7 @@ export const NODE_TYPE_CONFIG: Record<Funnel.NodeType, Funnel.NodeTypeConfig> = 
     allowsOutgoing: true,
     autoIncrement: true
   },
-  'downsell': {
+  downsell: {
     label: 'Downsell',
     icon: 'i-lucide-trending-down',
     defaultButtonLabel: 'Take This Deal',
@@ -38,4 +46,4 @@ export const NODE_TYPE_CONFIG: Record<Funnel.NodeType, Funnel.NodeTypeConfig> = 
     allowsOutgoing: false,
     maxOutgoingEdges: 0
   }
-}
+})
