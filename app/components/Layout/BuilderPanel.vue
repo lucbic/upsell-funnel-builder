@@ -24,6 +24,21 @@
 
   const store = useFunnel()
   const toast = useToast()
+  const colorMode = useColorMode()
+
+  const minimapColors = computed(() =>
+    colorMode.value === 'dark'
+      ? {
+          maskColor: 'rgb(31 41 55 / 0.8)',
+          nodeColor: 'var(--ui-bg-inverted)',
+          nodeStrokeColor: 'rgb(55 65 81)'
+        }
+      : {
+          maskColor: 'rgb(243 244 246 / 0.8)',
+          nodeColor: 'var(--ui-bg)',
+          nodeStrokeColor: 'rgb(229 231 235)'
+        }
+  )
 
   const {
     screenToFlowCoordinate,
@@ -158,7 +173,11 @@
     </template>
 
     <VFBackground
-      pattern-color="rgba(255, 255, 255, 0.1)"
+      :pattern-color="
+        colorMode.value === 'dark'
+          ? 'rgba(255, 255, 255, 0.1)'
+          : 'rgba(0, 0, 0, 0.05)'
+      "
       :gap="25"
       variant="lines"
       class="pointer-events-none"
@@ -168,14 +187,28 @@
       position="top-right"
       :show-interactive="false"
       :fit-view-params="{ duration: 300, padding: 0 }"
+      class="border-muted overflow-hidden rounded-full
+        border"
     />
-
-    <VFMinimap pannable zoomable position="top-left" />
   </VueFlow>
 </template>
 
 <style scoped>
   :deep(.vue-flow__edge.selected .vue-flow__edge-path) {
     stroke: rgba(0, 89, 220, 0.8);
+    z-index: 50;
+  }
+
+  :deep(.vue-flow__controls-button) {
+    background-color: var(--ui-bg-elevated) !important;
+    border-color: var(--ui-border-muted) !important;
+
+    & > svg {
+      fill: var(--ui-text) !important;
+    }
+
+    &:hover {
+      background-color: var(--ui-bg-accented) !important;
+    }
   }
 </style>
