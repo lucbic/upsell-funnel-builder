@@ -10,15 +10,19 @@
 
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
 
-  const nodeStyle = {
+  const nodeStyle = computed(() => ({
     width: `${NODE_WIDTH}px`,
-    height: `${NODE_HEIGHT}px`
-  }
+    height: `${NODE_HEIGHT}px`,
+    ...(props.selected && {
+      borderColor: 'rgba(0, 89, 220, 0.8)'
+    })
+  }))
 </script>
 
 <template>
   <div
     :style="nodeStyle"
+    :class="{ 'node-selected': selected }"
     class="flex cursor-move flex-col rounded-lg border
       border-gray-600 bg-gray-900 shadow-lg
       transition-shadow hover:shadow-xl"
@@ -61,3 +65,18 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+  .node-selected {
+    position: relative;
+  }
+
+  .node-selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 89, 220, 0.08);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+</style>

@@ -31,11 +31,12 @@
   } = useVueFlow()
 
   onConnect((connection: Connection) => {
-    if (!store.validateConnection(connection)) {
+    const validation = store.validateConnection(connection)
+
+    if (!validation.valid) {
       toast.add({
         title: 'Invalid connection',
-        description:
-          'This connection is not allowed by the funnel rules.',
+        description: validation.error,
         icon: 'i-lucide-alert-triangle',
         color: 'error',
         duration: 3000
@@ -158,15 +159,11 @@
     />
 
     <VFControls
-      class="absolute top-0 right-0 left-auto!"
+      position="top-right"
       :show-interactive="false"
       :fit-view-params="{ duration: 300, padding: 0 }"
     />
 
-    <VFMinimap
-      pannable
-      zoomable
-      class="absolute right-0 bottom-0 left-auto!"
-    />
+    <VFMinimap pannable zoomable position="bottom-right" />
   </VueFlow>
 </template>
