@@ -18,7 +18,7 @@
 
   import { Background as VFBackground } from '@vue-flow/background'
   import { Controls as VFControls } from '@vue-flow/controls'
-  import { MiniMap as VFMinimap } from '@vue-flow/minimap'
+  // import { MiniMap as VFMinimap } from '@vue-flow/minimap'
 
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
 
@@ -150,23 +150,23 @@
       @edges-change="onEdgesChange"
     >
       <template #node-sales-page="props">
-        <FunnelNode v-bind="props" />
+        <BuilderPanelNode v-bind="props" />
       </template>
 
       <template #node-order-page="props">
-        <FunnelNode v-bind="props" />
+        <BuilderPanelNode v-bind="props" />
       </template>
 
       <template #node-upsell="props">
-        <FunnelNode v-bind="props" />
+        <BuilderPanelNode v-bind="props" />
       </template>
 
       <template #node-downsell="props">
-        <FunnelNode v-bind="props" />
+        <BuilderPanelNode v-bind="props" />
       </template>
 
       <template #node-thank-you="props">
-        <FunnelNode v-bind="props" />
+        <BuilderPanelNode v-bind="props" />
       </template>
 
       <VFBackground
@@ -187,7 +187,7 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   :deep(.vue-flow__edge.selected .vue-flow__edge-path) {
     stroke: var(--color-selection-border);
     z-index: 50;

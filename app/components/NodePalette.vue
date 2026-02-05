@@ -15,10 +15,31 @@
     )
     event.dataTransfer.effectAllowed = 'move'
   }
+
+  const links = [
+    {
+      label: 'Portfolio',
+      icon: 'i-lucide-globe',
+      to: 'https://advaita.dev/portfolio',
+      target: '_blank'
+    },
+    {
+      label: 'LinkedIn',
+      icon: 'i-lucide-linkedin',
+      to: 'https://www.linkedin.com/in/lucbic/',
+      target: '_blank'
+    },
+    {
+      label: 'GitHub',
+      icon: 'i-lucide-github',
+      to: 'https://github.com/lucbic',
+      target: '_blank'
+    }
+  ]
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 p-4">
+  <div class="flex h-full flex-col gap-2">
     <h3 class="mb-2 text-xs font-semibold uppercase">
       Funnel Steps
     </h3>
@@ -31,13 +52,21 @@
         active:cursor-grabbing"
       @dragstart="onDragStart($event, type)"
     >
-      <FunnelNode
+      <BuilderPanelNode
         palette
         :data="{
           nodeType: type,
           icon: config.icon,
           title: config.label
         }"
+      />
+    </div>
+
+    <div class="mt-auto pt-4">
+      <UNavigationMenu
+        :items="links"
+        orientation="vertical"
+        class="w-full"
       />
     </div>
   </div>
