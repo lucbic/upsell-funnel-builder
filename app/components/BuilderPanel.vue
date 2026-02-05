@@ -11,14 +11,12 @@
   } from '@vue-flow/core'
   import { Background as VFBackground } from '@vue-flow/background'
   import { Controls as VFControls } from '@vue-flow/controls'
+  const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
 
-  const store = useFunnelBuilderStore()
+  const store = useFunnel()
   const toast = useToast()
 
   const { screenToFlowCoordinate, onConnect } = useVueFlow()
-
-  const NODE_WIDTH = 192 // .h-20 = 5rem = 80px
-  const NODE_HEIGHT = 80 // .w-48 = 12rem = 192px
 
   onConnect((connection: Connection) => {
     if (!store.validateConnection(connection)) {
@@ -67,6 +65,7 @@
     const nodeType = event.dataTransfer?.getData(
       'application/vueflow'
     ) as Funnel.NodeType
+
     if (!nodeType) return
 
     const flowPosition = screenToFlowCoordinate({
@@ -91,8 +90,10 @@
       type: 'smoothstep',
       animated: true
     }"
-    :pan-on-scroll="true"
-    :zoom-on-scroll="true"
+    pan-on-scroll
+    zoom-on-scroll
+    snap-to-grid
+    :snap-grid="[25, 25]"
     class="h-full w-full"
     @dragover="onDragOver"
     @drop="onDrop"

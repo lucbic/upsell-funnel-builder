@@ -7,13 +7,20 @@
       accentColor?: string
     }
   >()
+
+  const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
+
+  const nodeStyle = {
+    width: `${NODE_WIDTH}px`,
+    height: `${NODE_HEIGHT}px`
+  }
 </script>
 
 <template>
   <div
-    class="h-20 w-48 rounded-lg border border-gray-700
-      bg-gray-900 shadow-lg transition-shadow
-      hover:shadow-xl"
+    :style="nodeStyle"
+    class="rounded-lg border border-gray-700 bg-gray-900
+      shadow-lg transition-shadow hover:shadow-xl"
   >
     <Handle type="target" :position="Position.Left" />
 
