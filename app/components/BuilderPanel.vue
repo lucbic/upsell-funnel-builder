@@ -17,6 +17,9 @@
 
   const { screenToFlowCoordinate, onConnect } = useVueFlow()
 
+  const NODE_WIDTH = 192 // .h-20 = 5rem = 80px
+  const NODE_HEIGHT = 80 // .w-48 = 12rem = 192px
+
   onConnect((connection: Connection) => {
     if (!store.validateConnection(connection)) {
       toast.add({
@@ -66,12 +69,17 @@
     ) as Funnel.NodeType
     if (!nodeType) return
 
-    const position = screenToFlowCoordinate({
+    const flowPosition = screenToFlowCoordinate({
       x: event.clientX,
       y: event.clientY
     })
 
-    store.createNode(nodeType, position)
+    const centeredPosition = {
+      x: flowPosition.x - NODE_WIDTH / 2,
+      y: flowPosition.y - NODE_HEIGHT / 2
+    }
+
+    store.createNode(nodeType, centeredPosition)
   }
 </script>
 
