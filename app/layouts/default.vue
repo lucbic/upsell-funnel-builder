@@ -112,7 +112,7 @@
       resizable
       class="bg-elevated/25"
     >
-      <NodePalette />
+      <LayoutNodePalette />
     </UDashboardSidebar>
 
     <UMain class="h-full w-full">
