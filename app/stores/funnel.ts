@@ -1,10 +1,10 @@
 import type { Node, Edge, Connection } from '@vue-flow/core'
-import { MarkerType } from '@vue-flow/core'
-
 import type {
   ValidationResult,
   ValidationContext
 } from '~/utils/connectionValidation'
+
+import { MarkerType } from '@vue-flow/core'
 import { getConnectionValidator } from '~/utils/connectionValidation'
 
 export const useFunnel = defineStore('funnel', () => {
