@@ -1,5 +1,7 @@
 import type { Node, Edge, Connection } from '@vue-flow/core'
 
+import { MarkerType } from '@vue-flow/core'
+
 export const useFunnel = defineStore('funnel', () => {
   const nodeTypeConfig = useNodeTypeConfig()
   const nodes = ref<Node<Funnel.NodeData>[]>([])
@@ -90,7 +92,12 @@ export const useFunnel = defineStore('funnel', () => {
       sourceHandle: connection.sourceHandle,
       targetHandle: connection.targetHandle,
       type: 'smoothstep',
-      animated: true
+      animated: true,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 20,
+        height: 20
+      }
     }
 
     edges.value.push(newEdge)

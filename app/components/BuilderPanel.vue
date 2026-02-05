@@ -1,22 +1,34 @@
 <script setup lang="ts">
-  import '@vue-flow/controls/dist/style.css'
-  import '@vue-flow/core/dist/style.css'
-  import '@vue-flow/core/dist/theme-default.css'
-
-  import { VueFlow, useVueFlow } from '@vue-flow/core'
+  import {
+    VueFlow,
+    useVueFlow,
+    MarkerType
+  } from '@vue-flow/core'
   import type {
     Connection,
     NodeChange,
     Node
   } from '@vue-flow/core'
+
+  import '@vue-flow/controls/dist/style.css'
+  import '@vue-flow/core/dist/style.css'
+  import '@vue-flow/core/dist/theme-default.css'
+  import '@vue-flow/minimap/dist/style.css'
+
   import { Background as VFBackground } from '@vue-flow/background'
   import { Controls as VFControls } from '@vue-flow/controls'
+  import { MiniMap as VFMinimap } from '@vue-flow/minimap'
+
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
 
   const store = useFunnel()
   const toast = useToast()
 
-  const { screenToFlowCoordinate, onConnect, applyNodeChanges } = useVueFlow()
+  const {
+    screenToFlowCoordinate,
+    onConnect,
+    applyNodeChanges
+  } = useVueFlow()
 
   onConnect((connection: Connection) => {
     if (!store.validateConnection(connection)) {
@@ -36,8 +48,12 @@
 
   const onNodesChange = (changes: NodeChange[]) => {
     // Separate remove changes from other changes
-    const removeChanges = changes.filter(c => c.type === 'remove')
-    const otherChanges = changes.filter(c => c.type !== 'remove')
+    const removeChanges = changes.filter(
+      c => c.type === 'remove'
+    )
+    const otherChanges = changes.filter(
+      c => c.type !== 'remove'
+    )
 
     // Apply position, dimension, and selection changes
     if (otherChanges.length > 0) {
@@ -46,7 +62,10 @@
 
     // Handle remove changes separately to clean up edges and node type counts
     for (const change of removeChanges) {
-      const removeChange = change as { type: 'remove'; id: string }
+      const removeChange = change as {
+        type: 'remove'
+        id: string
+      }
       if (removeChange.id) {
         store.deleteNode(removeChange.id)
       }
@@ -93,7 +112,12 @@
     v-model:edges="store.edges"
     :default-edge-options="{
       type: 'smoothstep',
-      animated: true
+      animated: true,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 25,
+        height: 25
+      }
     }"
     :apply-default="false"
     pan-on-scroll
@@ -134,9 +158,15 @@
     />
 
     <VFControls
-      class="absolute right-0 bottom-0 left-auto!"
+      class="absolute top-0 right-0 left-auto!"
       :show-interactive="false"
       :fit-view-params="{ duration: 300, padding: 0 }"
+    />
+
+    <VFMinimap
+      pannable
+      zoomable
+      class="absolute right-0 bottom-0 left-auto!"
     />
   </VueFlow>
 </template>
