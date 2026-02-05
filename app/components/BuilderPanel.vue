@@ -16,7 +16,7 @@
   const store = useFunnel()
   const toast = useToast()
 
-  const { screenToFlowCoordinate, onConnect } = useVueFlow()
+  const { screenToFlowCoordinate, onConnect, applyNodeChanges } = useVueFlow()
 
   onConnect((connection: Connection) => {
     if (!store.validateConnection(connection)) {
@@ -35,15 +35,20 @@
   })
 
   const onNodesChange = (changes: NodeChange[]) => {
-    for (const change of changes) {
-      if (change.type === 'remove') {
-        const removeChange = change as {
-          type: 'remove'
-          id: string
-        }
-        if (removeChange.id) {
-          store.deleteNode(removeChange.id)
-        }
+    // Separate remove changes from other changes
+    const removeChanges = changes.filter(c => c.type === 'remove')
+    const otherChanges = changes.filter(c => c.type !== 'remove')
+
+    // Apply position, dimension, and selection changes
+    if (otherChanges.length > 0) {
+      applyNodeChanges(otherChanges)
+    }
+
+    // Handle remove changes separately to clean up edges and node type counts
+    for (const change of removeChanges) {
+      const removeChange = change as { type: 'remove'; id: string }
+      if (removeChange.id) {
+        store.deleteNode(removeChange.id)
       }
     }
   }
@@ -84,12 +89,13 @@
 
 <template>
   <VueFlow
-    :nodes="store.nodes"
-    :edges="store.edges"
+    v-model:nodes="store.nodes"
+    v-model:edges="store.edges"
     :default-edge-options="{
       type: 'smoothstep',
       animated: true
     }"
+    :apply-default="false"
     pan-on-scroll
     zoom-on-scroll
     snap-to-grid
