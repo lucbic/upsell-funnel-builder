@@ -4,6 +4,11 @@ export default defineAppConfig({
       slots: {
         body: 'p-0!'
       }
+    },
+    toaster: {
+      defaultVariants: {
+        position: 'bottom-left'
+      }
     }
   }
 })
