@@ -14,7 +14,9 @@
     })
   }))
 
-  const themeColor = computed(() => useNodeTheme(props.data.nodeType))
+  const themeColor = computed(() =>
+    useNodeTheme(props.data.nodeType)
+  )
 </script>
 
 <template>
@@ -66,17 +68,17 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   .node-selected {
     position: relative;
-  }
 
-  .node-selected::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 89, 220, 0.08);
-    border-radius: inherit;
-    pointer-events: none;
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 89, 220, 0.08);
+      border-radius: inherit;
+      pointer-events: none;
+    }
   }
 </style>
