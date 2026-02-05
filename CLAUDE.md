@@ -107,6 +107,7 @@ bun run typecheck
 - Custom color classes are available in Tailwind config.
 - Custom css variables are available in `app/assets/css/modules/_variables.scss`
 - **For medium to complex UI changes**: Use the `mcp__nuxt-ui-remote__list-components` tool to discover and select appropriate Nuxt UI components before implementation
+- **Visual Verification**: When making visual changes (adding HTML elements, CSS modifications), verify the result in the browser using Playwright to ensure the changes render correctly
 
 ### HTML Templating Conventions
 
