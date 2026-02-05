@@ -4,14 +4,6 @@
     Funnel.NodeTypeConfig
   ][]
 
-  const accentColors: Record<Funnel.NodeType, string> = {
-    'sales-page': 'text-blue-400',
-    'order-page': 'text-amber-400',
-    upsell: 'text-green-400',
-    downsell: 'text-orange-400',
-    'thank-you': 'text-emerald-400'
-  }
-
   const onDragStart = (
     event: DragEvent,
     nodeType: Funnel.NodeType
@@ -43,7 +35,7 @@
     >
       <UIcon
         :name="config.icon"
-        :class="accentColors[type]"
+        :class="getNodeIconClass(type)"
         class="size-4"
       />
 
