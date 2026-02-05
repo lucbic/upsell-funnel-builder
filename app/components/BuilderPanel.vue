@@ -81,6 +81,7 @@
 
   const onDragOver = (event: DragEvent) => {
     event.preventDefault()
+
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = 'move'
     }

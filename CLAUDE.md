@@ -114,6 +114,7 @@ bun run typecheck
   - Implementing new user interactions or flows
   - Testing validation logic that shows UI feedback (toasts, errors, etc.)
   - **Skip browser checks for**: Type system changes, refactors that don't change behavior, store logic updates, documentation changes, configuration updates
+  - **Screenshot storage**: Always save Playwright screenshots to `.screenshots/` directory (e.g., `filename: '.screenshots/feature-name.png'`)
 
 ### HTML Templating Conventions
 
