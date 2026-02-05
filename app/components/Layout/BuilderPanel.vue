@@ -5,10 +5,10 @@
     MarkerType
   } from '@vue-flow/core'
   import type {
-    Connection,
+    Connection as VFConnection,
     NodeChange,
     EdgeChange,
-    Node
+    Node as VFNode
   } from '@vue-flow/core'
 
   import '@vue-flow/controls/dist/style.css'
@@ -32,7 +32,7 @@
     applyEdgeChanges
   } = useVueFlow()
 
-  onConnect((connection: Connection) => {
+  onConnect((connection: VFConnection) => {
     const validation = store.validateConnection(connection)
 
     if (!validation.valid) {
@@ -50,7 +50,6 @@
   })
 
   const onNodesChange = (changes: NodeChange[]) => {
-    // Separate remove changes from other changes
     const removeChanges = changes.filter(
       c => c.type === 'remove'
     )
@@ -58,12 +57,10 @@
       c => c.type !== 'remove'
     )
 
-    // Apply position, dimension, and selection changes
     if (otherChanges.length > 0) {
       applyNodeChanges(otherChanges)
     }
 
-    // Handle remove changes separately to clean up edges and node type counts
     for (const change of removeChanges) {
       const removeChange = change as {
         type: 'remove'
@@ -75,7 +72,7 @@
     }
   }
 
-  const onNodesDelete = (nodes: Node[]) => {
+  const onNodesDelete = (nodes: VFNode[]) => {
     nodes.forEach(node => {
       store.deleteNode(node.id)
     })
@@ -128,6 +125,7 @@
       }
     }"
     :apply-default="false"
+    elevate-edges-on-select
     pan-on-scroll
     zoom-on-scroll
     snap-to-grid
@@ -140,23 +138,23 @@
     @edges-change="onEdgesChange"
   >
     <template #node-sales-page="props">
-      <Node v-bind="props" />
+      <FunnelNode v-bind="props" />
     </template>
 
     <template #node-order-page="props">
-      <Node v-bind="props" />
+      <FunnelNode v-bind="props" />
     </template>
 
     <template #node-upsell="props">
-      <Node v-bind="props" />
+      <FunnelNode v-bind="props" />
     </template>
 
     <template #node-downsell="props">
-      <Node v-bind="props" />
+      <FunnelNode v-bind="props" />
     </template>
 
     <template #node-thank-you="props">
-      <Node v-bind="props" />
+      <FunnelNode v-bind="props" />
     </template>
 
     <VFBackground
@@ -175,3 +173,9 @@
     <VFMinimap pannable zoomable position="top-left" />
   </VueFlow>
 </template>
+
+<style scoped>
+  :deep(.vue-flow__edge.selected .vue-flow__edge-path) {
+    stroke: rgba(0, 89, 220, 0.8);
+  }
+</style>
