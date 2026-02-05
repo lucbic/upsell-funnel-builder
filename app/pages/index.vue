@@ -42,8 +42,8 @@
     <UDashboardSidebar
       id="palette"
       side="left"
-      resizable
       class="bg-elevated/25"
+      :default-size="18"
     >
       <LayoutNodePalette />
     </UDashboardSidebar>
@@ -56,9 +56,9 @@
       id="default"
       v-model:open="open"
       collapsible
-      resizable
+      :default-size="18"
       side="right"
-      class="bg-elevated/25"
+      class="bg-elevated/25 border-default border-l"
     >
       <template #default="{ collapsed }">
         <UNavigationMenu
