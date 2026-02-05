@@ -188,7 +188,7 @@
       :show-interactive="false"
       :fit-view-params="{ duration: 300, padding: 0 }"
       class="border-muted overflow-hidden rounded-full
-        border"
+        border-2"
     />
   </VueFlow>
 </template>
@@ -202,6 +202,11 @@
   :deep(.vue-flow__controls-button) {
     background-color: var(--ui-bg-elevated) !important;
     border-color: var(--ui-border-muted) !important;
+    border-width: 2px !important;
+
+    &:last-child {
+      border-bottom: none !important;
+    }
 
     & > svg {
       fill: var(--ui-text) !important;
