@@ -74,10 +74,10 @@
           variant="subtle"
           color="error"
           icon="i-lucide-trash-2"
+          aria-label="Delete funnel"
+          title="Delete funnel"
           @click="handleDelete"
-        >
-          Delete
-        </UButton>
+        />
       </div>
     </div>
   </UCard>
