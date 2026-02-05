@@ -11,7 +11,7 @@ const STORAGE_KEY_PREFIX = 'funnel_'
 const STORAGE_INDEX_KEY = 'funnel_index'
 const AUTO_SAVE_DEBOUNCE_MS = 1000
 
-export const useFunnel = defineStore('funnel', () => {
+export const useFunnelStore = defineStore('funnel', () => {
   const toast = useToast()
   const nodeTypeConfig = useNodeTypeConfig()
 

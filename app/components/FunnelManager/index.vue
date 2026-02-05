@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const funnel = useFunnel()
+  const funnel = useFunnelStore()
   const fileInput = ref<HTMLInputElement | null>(null)
 
   const triggerImport = () => {

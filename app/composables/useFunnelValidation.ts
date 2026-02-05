@@ -5,7 +5,7 @@ import type {
 import { validateFunnel } from '~/utils/funnelValidation'
 
 export const useFunnelValidation = () => {
-  const store = useFunnel()
+  const store = useFunnelStore()
 
   const validationResult = computed<FunnelValidationResult>(
     () =>
