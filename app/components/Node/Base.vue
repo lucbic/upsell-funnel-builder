@@ -19,14 +19,26 @@
 <template>
   <div
     :style="nodeStyle"
-    class="rounded-lg border border-gray-700 bg-gray-900
-      shadow-lg transition-shadow hover:shadow-xl"
+    class="flex cursor-move flex-col rounded-lg border
+      border-gray-600 bg-gray-900 shadow-lg
+      transition-shadow hover:shadow-xl"
   >
-    <Handle type="target" :position="Position.Left" />
+    <Handle
+      class="border-none!"
+      type="target"
+      :position="Position.Left"
+    />
+
+    <Handle
+      v-if="data.nodeType !== 'thank-you'"
+      class="border-none!"
+      type="source"
+      :position="Position.Right"
+    />
 
     <div
-      class="flex items-center gap-2 border-b
-        border-gray-700 px-3 py-2"
+      class="flex flex-1 items-center gap-2 border-b
+        border-gray-700 px-3 py-1"
     >
       <UIcon
         :name="data.icon"
@@ -39,16 +51,13 @@
       </span>
     </div>
 
-    <div v-if="data.primaryButtonLabel" class="px-3 py-2">
+    <div
+      v-if="data.primaryButtonLabel"
+      class="flex-1 items-center px-3 py-1"
+    >
       <span class="text-xs text-gray-400">
         {{ data.primaryButtonLabel }}
       </span>
     </div>
-
-    <Handle
-      v-if="data.nodeType !== 'thank-you'"
-      type="source"
-      :position="Position.Right"
-    />
   </div>
 </template>
