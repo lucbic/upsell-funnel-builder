@@ -5,7 +5,7 @@ declare global {
     type NodeData = {
       title: string
       icon: string
-      primaryButtonLabel: string
+      primaryButtonLabel?: string
       nodeType: NodeType
       sequenceNumber?: number
     }
