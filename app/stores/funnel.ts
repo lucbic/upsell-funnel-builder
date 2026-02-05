@@ -1,6 +1,11 @@
 import type { Node, Edge, Connection } from '@vue-flow/core'
-
 import { MarkerType } from '@vue-flow/core'
+
+import type {
+  ValidationResult,
+  ValidationContext
+} from '~/utils/connectionValidation'
+import { getConnectionValidator } from '~/utils/connectionValidation'
 
 export const useFunnel = defineStore('funnel', () => {
   const nodeTypeConfig = useNodeTypeConfig()
@@ -50,38 +55,18 @@ export const useFunnel = defineStore('funnel', () => {
     nodes.value.push(newNode)
   }
 
+  const connectionValidator = getConnectionValidator()
+
   const validateConnection = (
     connection: Connection
-  ): boolean => {
-    const sourceNode = nodes.value.find(
-      n => n.id === connection.source
-    )
-    if (!sourceNode) return false
-
-    // No self-connections
-    if (connection.source === connection.target)
-      return false
-
-    // Thank You cannot have outgoing edges
-    if (sourceNode.type === 'thank-you') return false
-
-    // Sales Page max 1 outgoing edge
-    if (sourceNode.type === 'sales-page') {
-      const existingEdges = edges.value.filter(
-        e => e.source === sourceNode.id
-      )
-      if (existingEdges.length >= 1) return false
+  ): ValidationResult => {
+    const context: ValidationContext = {
+      connection,
+      nodes: nodes.value,
+      edges: edges.value
     }
 
-    // No duplicate edges
-    const duplicate = edges.value.find(
-      e =>
-        e.source === connection.source &&
-        e.target === connection.target
-    )
-    if (duplicate) return false
-
-    return true
+    return connectionValidator(context)
   }
 
   const addEdge = (connection: Connection) => {
@@ -92,6 +77,8 @@ export const useFunnel = defineStore('funnel', () => {
       sourceHandle: connection.sourceHandle,
       targetHandle: connection.targetHandle,
       type: 'smoothstep',
+      selectable: true,
+      deletable: true,
       animated: true,
       markerEnd: {
         type: MarkerType.ArrowClosed,
