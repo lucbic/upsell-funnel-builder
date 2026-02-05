@@ -26,20 +26,6 @@
   const toast = useToast()
   const colorMode = useColorMode()
 
-  const minimapColors = computed(() =>
-    colorMode.value === 'dark'
-      ? {
-          maskColor: 'rgb(31 41 55 / 0.8)',
-          nodeColor: 'var(--ui-bg-inverted)',
-          nodeStrokeColor: 'rgb(55 65 81)'
-        }
-      : {
-          maskColor: 'rgb(243 244 246 / 0.8)',
-          nodeColor: 'var(--ui-bg)',
-          nodeStrokeColor: 'rgb(229 231 235)'
-        }
-  )
-
   const {
     screenToFlowCoordinate,
     onConnect,
@@ -127,75 +113,83 @@
 </script>
 
 <template>
-  <VueFlow
-    v-model:nodes="store.nodes"
-    v-model:edges="store.edges"
-    :default-edge-options="{
-      type: 'smoothstep',
-      animated: true,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 25,
-        height: 25
-      }
-    }"
-    :apply-default="false"
-    elevate-edges-on-select
-    pan-on-scroll
-    zoom-on-scroll
-    snap-to-grid
-    :snap-grid="[25, 25]"
-    class="h-full w-full"
-    @dragover="onDragOver"
-    @drop="onDrop"
-    @nodes-change="onNodesChange"
-    @nodes-delete="onNodesDelete"
-    @edges-change="onEdgesChange"
-  >
-    <template #node-sales-page="props">
-      <FunnelNode v-bind="props" />
-    </template>
-
-    <template #node-order-page="props">
-      <FunnelNode v-bind="props" />
-    </template>
-
-    <template #node-upsell="props">
-      <FunnelNode v-bind="props" />
-    </template>
-
-    <template #node-downsell="props">
-      <FunnelNode v-bind="props" />
-    </template>
-
-    <template #node-thank-you="props">
-      <FunnelNode v-bind="props" />
-    </template>
-
-    <VFBackground
-      :pattern-color="
-        colorMode.value === 'dark'
-          ? 'rgba(255, 255, 255, 0.1)'
-          : 'rgba(0, 0, 0, 0.05)'
-      "
-      :gap="25"
-      variant="lines"
-      class="pointer-events-none"
+  <div class="relative h-full w-full">
+    <UInput
+      v-model="store.funnelName"
+      size="lg"
+      trailing-icon="i-lucide-pencil"
+      variant="subtle"
+      placeholder="Enter funnel name..."
+      class="absolute top-[15px] left-1/2 z-50 w-96
+        -translate-x-1/2 shadow-lg"
     />
 
-    <VFControls
-      position="top-right"
-      :show-interactive="false"
-      :fit-view-params="{ duration: 300, padding: 0 }"
-      class="border-muted overflow-hidden rounded-full
-        border-2"
-    />
-  </VueFlow>
+    <VueFlow
+      v-model:nodes="store.nodes"
+      v-model:edges="store.edges"
+      :default-edge-options="{
+        type: 'smoothstep',
+        animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 25,
+          height: 25
+        }
+      }"
+      :apply-default="false"
+      elevate-edges-on-select
+      pan-on-scroll
+      zoom-on-scroll
+      snap-to-grid
+      :snap-grid="[25, 25]"
+      class="h-full w-full"
+      @dragover="onDragOver"
+      @drop="onDrop"
+      @nodes-change="onNodesChange"
+      @nodes-delete="onNodesDelete"
+      @edges-change="onEdgesChange"
+    >
+      <template #node-sales-page="props">
+        <FunnelNode v-bind="props" />
+      </template>
+
+      <template #node-order-page="props">
+        <FunnelNode v-bind="props" />
+      </template>
+
+      <template #node-upsell="props">
+        <FunnelNode v-bind="props" />
+      </template>
+
+      <template #node-downsell="props">
+        <FunnelNode v-bind="props" />
+      </template>
+
+      <template #node-thank-you="props">
+        <FunnelNode v-bind="props" />
+      </template>
+
+      <VFBackground
+        pattern-color="var(--ui-color-neutral-800)"
+        :gap="25"
+        variant="lines"
+        class="pointer-events-none"
+      />
+
+      <VFControls
+        position="top-right"
+        :show-interactive="false"
+        :fit-view-params="{ duration: 300, padding: 0 }"
+        class="border-muted overflow-hidden rounded-full
+          border-2"
+      />
+    </VueFlow>
+  </div>
 </template>
 
 <style scoped>
   :deep(.vue-flow__edge.selected .vue-flow__edge-path) {
-    stroke: rgba(0, 89, 220, 0.8);
+    stroke: var(--color-selection-border);
     z-index: 50;
   }
 
