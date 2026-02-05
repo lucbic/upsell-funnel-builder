@@ -1,31 +1,7 @@
 <script setup lang="ts">
-  import type { NavigationMenuItem } from '@nuxt/ui'
-
-  const route = useRoute()
   const toast = useToast()
 
   const open = ref(false)
-
-  const links = [
-    {
-      label: 'Portfolio',
-      icon: 'i-lucide-globe',
-      to: 'https://advaita.dev/portfolio',
-      target: '_blank'
-    },
-    {
-      label: 'LinkedIn',
-      icon: 'i-lucide-linkedin',
-      to: 'https://www.linkedin.com/in/lucbic/',
-      target: '_blank'
-    },
-    {
-      label: 'GitHub',
-      icon: 'i-lucide-github',
-      to: 'https://github.com/lucbic',
-      target: '_blank'
-    }
-  ] satisfies NavigationMenuItem[]
 
   onMounted(async () => {
     toast.add({
@@ -45,11 +21,11 @@
       class="bg-elevated/25"
       :default-size="18"
     >
-      <LayoutNodePalette />
+      <NodePalette />
     </UDashboardSidebar>
 
     <UMain class="h-full w-full">
-      <LayoutBuilderPanel />
+      <BuilderPanel />
     </UMain>
 
     <UDashboardSidebar
@@ -60,15 +36,7 @@
       side="right"
       class="bg-elevated/25 border-default border-l"
     >
-      <template #default="{ collapsed }">
-        <UNavigationMenu
-          :collapsed="collapsed"
-          :items="links"
-          orientation="vertical"
-          tooltip
-          class="mt-auto"
-        />
-      </template>
+      <FunnelManager />
     </UDashboardSidebar>
   </UDashboardGroup>
 </template>
