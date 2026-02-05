@@ -20,7 +20,7 @@
       ? `${NODE_HEIGHT / 2}px`
       : `${NODE_HEIGHT}px`,
     ...(selected && {
-      borderColor: 'rgba(0, 89, 220, 0.8)'
+      borderColor: 'var(--color-selection-border)'
     })
   }))
 
@@ -87,7 +87,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0, 89, 220, 0.08);
+      background: var(--color-selection-overlay);
       border-radius: inherit;
       pointer-events: none;
     }
