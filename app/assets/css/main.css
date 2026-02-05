@@ -3,4 +3,8 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
+
+  --color-selection: rgb(0, 89, 220);
+  --color-selection-border: rgb(0 89 220 / 0.8);
+  --color-selection-overlay: rgb(0 89 220 / 0.08);
 }
