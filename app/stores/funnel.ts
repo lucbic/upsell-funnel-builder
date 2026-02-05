@@ -11,6 +11,7 @@ export const useFunnel = defineStore('funnel', () => {
   const nodeTypeConfig = useNodeTypeConfig()
   const nodes = ref<Node<Funnel.NodeData>[]>([])
   const edges = ref<Edge[]>([])
+  const funnelName = ref('Untitled Funnel')
 
   const nodeTypeCounts = ref<Record<string, number>>({
     upsell: 0,
@@ -110,6 +111,7 @@ export const useFunnel = defineStore('funnel', () => {
   return {
     nodes,
     edges,
+    funnelName,
     nodeTypeCounts,
     createNode,
     validateConnection,
