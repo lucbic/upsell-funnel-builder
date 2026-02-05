@@ -67,6 +67,7 @@ bun run typecheck
 
 - Use TypeScript for all code
 - Use arrow functions for methods and computed properties
+- **Implicit returns**: Always use implicit returns for arrow functions when possible (omit braces and return keyword for single expressions)
 - Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements
 - Use template syntax for declarative rendering
 - Use `<script setup>` syntax for concise component definitions
@@ -107,7 +108,12 @@ bun run typecheck
 - Custom color classes are available in Tailwind config.
 - Custom css variables are available in `app/assets/css/modules/_variables.scss`
 - **For medium to complex UI changes**: Use the `mcp__nuxt-ui-remote__list-components` tool to discover and select appropriate Nuxt UI components before implementation
-- **Visual Verification**: When making visual changes (adding HTML elements, CSS modifications), verify the result in the browser using Playwright to ensure the changes render correctly
+- **Visual Verification with Playwright**: Use browser checks ONLY when:
+  - Adding or modifying HTML structure/elements that affect layout
+  - Changing CSS/styling that impacts visual appearance
+  - Implementing new user interactions or flows
+  - Testing validation logic that shows UI feedback (toasts, errors, etc.)
+  - **Skip browser checks for**: Type system changes, refactors that don't change behavior, store logic updates, documentation changes, configuration updates
 
 ### HTML Templating Conventions
 
