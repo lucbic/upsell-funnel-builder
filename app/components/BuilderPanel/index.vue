@@ -183,6 +183,8 @@
         class="border-muted overflow-hidden rounded-full
           border-2"
       />
+
+      <BuilderPanelValidationPane />
     </VueFlow>
   </div>
 </template>
