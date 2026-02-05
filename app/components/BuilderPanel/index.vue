@@ -22,16 +22,17 @@
 
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
 
-  const store = useFunnel()
-  const toast = useToast()
-  const colorMode = useColorMode()
-
   const {
     screenToFlowCoordinate,
     onConnect,
     applyNodeChanges,
-    applyEdgeChanges
+    applyEdgeChanges,
+    fitView
   } = useVueFlow()
+
+  const store = useFunnelStore()
+  const toast = useToast()
+  const colorMode = useColorMode()
 
   onConnect((connection: VFConnection) => {
     const validation = store.validateConnection(connection)
@@ -110,6 +111,14 @@
 
     store.createNode(nodeType, centeredPosition)
   }
+
+  watch(
+    () => store.currentFunnelId,
+    async () => {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      fitView({ duration: 300, padding: '100px' })
+    }
+  )
 </script>
 
 <template>
@@ -125,6 +134,7 @@
     />
 
     <VueFlow
+      class="h-full w-full"
       v-model:nodes="store.nodes"
       v-model:edges="store.edges"
       :default-edge-options="{
@@ -137,12 +147,14 @@
         }
       }"
       :apply-default="false"
+      :snap-grid="[25, 25]"
+      :min-zoom="0.75"
+      :max-zoom="1.5"
+      :fit-view-params="{ duration: 300, padding: '100px' }"
       elevate-edges-on-select
       pan-on-scroll
       zoom-on-scroll
       snap-to-grid
-      :snap-grid="[25, 25]"
-      class="h-full w-full"
       @dragover="onDragOver"
       @drop="onDrop"
       @nodes-change="onNodesChange"
@@ -179,7 +191,10 @@
       <VFControls
         position="top-right"
         :show-interactive="false"
-        :fit-view-params="{ duration: 300, padding: 0 }"
+        :fit-view-params="{
+          duration: 300,
+          padding: '100px'
+        }"
         class="border-muted overflow-hidden rounded-full
           border-2"
       />
