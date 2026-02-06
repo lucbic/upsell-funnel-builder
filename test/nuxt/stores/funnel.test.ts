@@ -17,6 +17,21 @@ mockNuxtImport(
   () => (fn: () => void) => fn
 )
 
+const mockHandleError = vi.fn(
+  (
+    _title: string,
+    _description: string,
+    error?: unknown,
+    options?: { rethrow?: boolean }
+  ) => {
+    if (options?.rethrow) throw error
+  }
+)
+mockNuxtImport(
+  'useErrorHandler',
+  () => () => ({ handleError: mockHandleError })
+)
+
 describe('useFunnelStore', () => {
   let store: ReturnType<
     (typeof import('~/stores/funnel'))['useFunnelStore']
@@ -41,6 +56,7 @@ describe('useFunnelStore', () => {
     )
 
     mockToastAdd.mockClear()
+    mockHandleError.mockClear()
 
     const { useFunnelStore } =
       await import('~/stores/funnel')
@@ -273,15 +289,17 @@ describe('useFunnelStore', () => {
       ).toBeGreaterThanOrEqual(1)
     })
 
-    it('shows error toast on storage failure', () => {
+    it('calls handleError on storage failure', () => {
       vi.mocked(
         localStorage.setItem
       ).mockImplementationOnce(() => {
         throw new Error('QuotaExceeded')
       })
       store.saveFunnel()
-      expect(mockToastAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Storage Error' })
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Storage Error',
+        'Failed to save funnel. Storage may be full.',
+        expect.any(Error)
       )
     })
   })
@@ -328,10 +346,24 @@ describe('useFunnelStore', () => {
       expect(loadToasts).toHaveLength(0)
     })
 
-    it('shows error toast for missing funnel', () => {
+    it('calls handleError for missing funnel', () => {
       store.loadFunnel('nonexistent')
-      expect(mockToastAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Load Error' })
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Load Error',
+        'Could not find the requested funnel',
+        undefined,
+        expect.objectContaining({ toast: true })
+      )
+    })
+
+    it('silent mode suppresses error toast', () => {
+      mockHandleError.mockClear()
+      store.loadFunnel('nonexistent', { silent: true })
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Load Error',
+        'Could not find the requested funnel',
+        undefined,
+        expect.objectContaining({ toast: false })
       )
     })
   })
@@ -512,8 +544,10 @@ describe('useFunnelStore', () => {
       const file = createMockFile({ invalid: true })
 
       await store.importFunnel(file)
-      expect(mockToastAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Import Error' })
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Import Error',
+        'Invalid funnel file format',
+        expect.any(Error)
       )
     })
   })

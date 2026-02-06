@@ -18,6 +18,7 @@ const AUTO_SAVE_DEBOUNCE_MS = 1000
 
 export const useFunnelStore = defineStore('funnel', () => {
   const toast = useToast()
+  const { handleError } = useErrorHandler()
   const nodeTypeConfig = useNodeTypeConfig()
 
   // STATE
@@ -51,15 +52,12 @@ export const useFunnelStore = defineStore('funnel', () => {
       )
       savedFunnels.value = updated
     } catch (error) {
-      toast.add({
-        title: 'Storage Error',
-        description:
-          'Failed to update funnel index. Storage may be full.',
-        color: 'error',
-        icon: 'i-lucide-alert-circle'
-      })
-
-      throw error
+      handleError(
+        'Storage Error',
+        'Failed to update funnel index. Storage may be full.',
+        error,
+        { rethrow: true }
+      )
     }
   }
 
@@ -116,7 +114,13 @@ export const useFunnelStore = defineStore('funnel', () => {
         `${STORAGE_KEY_PREFIX}${id}`
       )
       return data ? JSON.parse(data) : null
-    } catch {
+    } catch (error) {
+      handleError(
+        'Storage Error',
+        'Failed to read funnel data from storage',
+        error,
+        { toast: false }
+      )
       return null
     }
   }
@@ -155,13 +159,11 @@ export const useFunnelStore = defineStore('funnel', () => {
         return current
       })
     } catch (error) {
-      toast.add({
-        title: 'Storage Error',
-        description:
-          'Failed to save funnel. Storage may be full.',
-        color: 'error',
-        icon: 'i-lucide-alert-circle'
-      })
+      handleError(
+        'Storage Error',
+        'Failed to save funnel. Storage may be full.',
+        error
+      )
     }
   }
 
@@ -172,16 +174,12 @@ export const useFunnelStore = defineStore('funnel', () => {
     const funnel = getSavedFunnelData(id)
 
     if (!funnel) {
-      if (!silent) {
-        toast.add({
-          title: 'Load Error',
-          description:
-            'Could not find the requested funnel',
-          color: 'error',
-          icon: 'i-lucide-alert-circle'
-        })
-      }
-
+      handleError(
+        'Load Error',
+        'Could not find the requested funnel',
+        undefined,
+        { toast: !silent }
+      )
       return
     }
 
@@ -236,13 +234,12 @@ export const useFunnelStore = defineStore('funnel', () => {
         title: 'Funnel Deleted',
         icon: 'i-lucide-trash-2'
       })
-    } catch {
-      toast.add({
-        title: 'Delete Error',
-        description: 'Failed to delete funnel',
-        color: 'error',
-        icon: 'i-lucide-alert-circle'
-      })
+    } catch (error) {
+      handleError(
+        'Delete Error',
+        'Failed to delete funnel',
+        error
+      )
     }
   }
 
@@ -338,13 +335,12 @@ export const useFunnelStore = defineStore('funnel', () => {
         description: `"${data.name}" has been imported`,
         icon: 'i-lucide-upload'
       })
-    } catch {
-      toast.add({
-        title: 'Import Error',
-        description: 'Invalid funnel file format',
-        color: 'error',
-        icon: 'i-lucide-alert-circle'
-      })
+    } catch (error) {
+      handleError(
+        'Import Error',
+        'Invalid funnel file format',
+        error
+      )
     }
   }
 
