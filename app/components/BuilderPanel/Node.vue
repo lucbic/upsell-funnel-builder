@@ -33,9 +33,9 @@
   <div
     :style="nodeStyle"
     :class="{ 'node-selected': selected }"
-    class="flex cursor-move flex-col rounded-lg border
-      border-gray-600 bg-gray-900 shadow-lg
-      transition-shadow hover:shadow-xl"
+    class="border-muted bg-elevated flex cursor-move
+      flex-col rounded-lg border shadow-lg transition-shadow
+      hover:shadow-xl"
   >
     <Handle
       v-if="!palette"
@@ -52,7 +52,7 @@
     />
 
     <div
-      :class="{ 'border-b border-gray-700': !palette }"
+      :class="{ 'border-muted border-b': !palette }"
       class="flex flex-1 items-center gap-2 px-3 py-1"
     >
       <UIcon
@@ -61,7 +61,7 @@
         class="size-4"
       />
 
-      <span class="text-sm font-semibold text-white">
+      <span class="text-highlighted text-sm font-semibold">
         {{ data?.title }}
       </span>
     </div>
@@ -73,7 +73,7 @@
       <UBadge
         :label="data.primaryButtonLabel"
         :color="themeColor.badge"
-        variant="subtle"
+        variant="outline"
       />
     </div>
   </div>
