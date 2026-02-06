@@ -379,7 +379,7 @@ describe('validateFunnel (integration)', () => {
     expect(result.errors.length).toBeGreaterThan(0)
     expect(result.isValid).toBe(false)
     expect(
-      findIssue(result.errors, 'missing-entry')
+      findIssue(result.errors, 'missing-entry-point')
     ).toBeDefined()
     expect(
       findIssue(result.errors, 'missing-terminal')
@@ -428,7 +428,7 @@ describe('validateFunnel (integration)', () => {
       })
     )
     expect(
-      findIssue(result.warnings, 'multiple-entry')
+      findIssue(result.warnings, 'multiple-entry-points')
     ).toBeDefined()
   })
 })
