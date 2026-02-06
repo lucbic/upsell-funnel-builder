@@ -1,4 +1,8 @@
-import type { Node, Edge, Connection } from '@vue-flow/core'
+import type {
+  Node as VFNode,
+  Edge as VFEdge,
+  Connection as VFConnection
+} from '@vue-flow/core'
 import type {
   ValidationResult,
   ValidationContext
@@ -17,8 +21,8 @@ export const useFunnelStore = defineStore('funnel', () => {
   const nodeTypeConfig = useNodeTypeConfig()
 
   // STATE
-  const nodes = ref<Node<Funnel.NodeData>[]>([])
-  const edges = ref<Edge[]>([])
+  const nodes = ref<VFNode<Funnel.NodeData>[]>([])
+  const edges = ref<VFEdge[]>([])
   const funnelName = ref('Untitled Funnel')
 
   const nodeTypeCounts = ref<Record<string, number>>({
@@ -33,6 +37,31 @@ export const useFunnelStore = defineStore('funnel', () => {
     []
   )
   const isLoading = ref(false)
+
+  const updateSavedFunnelsIndex = (
+    updater: (
+      current: Funnel.FunnelListItem[]
+    ) => Funnel.FunnelListItem[]
+  ) => {
+    try {
+      const updated = updater([...savedFunnels.value])
+      localStorage.setItem(
+        STORAGE_INDEX_KEY,
+        JSON.stringify(updated)
+      )
+      savedFunnels.value = updated
+    } catch (error) {
+      toast.add({
+        title: 'Storage Error',
+        description:
+          'Failed to update funnel index. Storage may be full.',
+        color: 'error',
+        icon: 'i-lucide-alert-circle'
+      })
+
+      throw error
+    }
+  }
 
   // GETTERS
   const hasContent = computed(
@@ -57,7 +86,7 @@ export const useFunnelStore = defineStore('funnel', () => {
       nodes: nodes.value.map(
         (node): Funnel.SerializedNode => ({
           id: node.id,
-          type: node.type as Funnel.NodeType,
+          type: node.data?.nodeType!,
           position: {
             x: node.position.x,
             y: node.position.y
@@ -112,15 +141,19 @@ export const useFunnelStore = defineStore('funnel', () => {
         updatedAt: funnel.updatedAt
       }
 
-      const existingIndex = savedFunnels.value.findIndex(
-        f => f.id === funnel.id
-      )
+      updateSavedFunnelsIndex(current => {
+        const existingIndex = current.findIndex(
+          f => f.id === funnel.id
+        )
 
-      if (existingIndex >= 0) {
-        savedFunnels.value[existingIndex] = listItem
-      } else {
-        savedFunnels.value.unshift(listItem)
-      }
+        if (existingIndex >= 0) {
+          current[existingIndex] = listItem
+        } else {
+          current.unshift(listItem)
+        }
+
+        return current
+      })
     } catch (error) {
       toast.add({
         title: 'Storage Error',
@@ -148,10 +181,12 @@ export const useFunnelStore = defineStore('funnel', () => {
           icon: 'i-lucide-alert-circle'
         })
       }
+
       return
     }
 
     if (!silent) isLoading.value = true
+
     currentFunnelId.value = funnel.id
     funnelName.value = funnel.name
     nodeTypeCounts.value = { ...funnel.nodeTypeCounts }
@@ -159,8 +194,8 @@ export const useFunnelStore = defineStore('funnel', () => {
 
     nodes.value = funnel.nodes.map(node => ({
       ...node,
-      type: node.type,
-      ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.type]?.label ?? node.type}`
+      type: node.data?.nodeType!,
+      ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.data?.nodeType!]?.label ?? node.data?.nodeType!}`
     }))
 
     edges.value = funnel.edges.map(edge => ({
@@ -189,8 +224,8 @@ export const useFunnelStore = defineStore('funnel', () => {
     try {
       localStorage.removeItem(`${STORAGE_KEY_PREFIX}${id}`)
 
-      savedFunnels.value = savedFunnels.value.filter(
-        f => f.id !== id
+      updateSavedFunnelsIndex(current =>
+        current.filter(f => f.id !== id)
       )
 
       if (currentFunnelId.value === id) {
@@ -279,8 +314,8 @@ export const useFunnelStore = defineStore('funnel', () => {
 
       nodes.value = data.nodes.map(node => ({
         ...node,
-        type: node.type,
-        ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.type]?.label ?? node.type}`
+        type: node.data?.nodeType!,
+        ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.data?.nodeType!]?.label ?? node.data?.nodeType!}`
       }))
 
       edges.value = data.edges.map(edge => ({
@@ -336,7 +371,7 @@ export const useFunnelStore = defineStore('funnel', () => {
       title = `${config.defaultTitle} ${sequenceNumber}`
     }
 
-    const newNode: Node<Funnel.NodeData> = {
+    const newNode: VFNode<Funnel.NodeData> = {
       id: `node-${nodeIdCounter.value}`,
       type,
       position,
@@ -372,7 +407,7 @@ export const useFunnelStore = defineStore('funnel', () => {
   const connectionValidator = getConnectionValidator()
 
   const validateConnection = (
-    connection: Connection
+    connection: VFConnection
   ): ValidationResult => {
     const context: ValidationContext = {
       connection,
@@ -383,8 +418,8 @@ export const useFunnelStore = defineStore('funnel', () => {
     return connectionValidator(context)
   }
 
-  const addEdge = (connection: Connection) => {
-    const newEdge: Edge = {
+  const addEdge = (connection: VFConnection) => {
+    const newEdge: VFEdge = {
       id: `e-${connection.source}${connection.sourceHandle ? `-${connection.sourceHandle}` : ''}-${connection.target}`,
       source: connection.source,
       target: connection.target,
@@ -408,7 +443,7 @@ export const useFunnelStore = defineStore('funnel', () => {
     const node = nodes.value.find(n => n.id === nodeId)
     if (!node) return
 
-    const nodeType = node.type as Funnel.NodeType
+    const nodeType = node.data?.nodeType!
     if (nodeTypeConfig[nodeType]?.autoIncrement) {
       nodeTypeCounts.value[nodeType] =
         (nodeTypeCounts.value[nodeType] ?? 1) - 1
