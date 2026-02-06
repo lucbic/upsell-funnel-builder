@@ -1,8 +1,5 @@
 <script setup lang="ts">
-  const nodeTypes = Object.entries(useNodeTypeConfig()) as [
-    Funnel.NodeType,
-    Funnel.NodeTypeConfig
-  ][]
+  const nodeTypes = useNodeTypeConfig()
 
   const store = useFunnelStore()
 
@@ -49,7 +46,7 @@
 
       <div class="flex flex-col gap-2">
         <div
-          v-for="[type, config] in nodeTypes"
+          v-for="(config, type) in nodeTypes"
           :key="type"
           role="button"
           tabindex="0"

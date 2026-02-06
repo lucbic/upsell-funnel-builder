@@ -39,6 +39,8 @@
     return `${totalIssueCount.value} issue${totalIssueCount.value > 1 ? 's' : ''}`
   })
 
+  const { NODE_HEIGHT, NODE_WIDTH } = useConstants()
+
   const focusNode = (nodeId: string | undefined) => {
     if (!nodeId) return
 
@@ -49,8 +51,8 @@
     addSelectedNodes([node])
 
     setCenter(
-      node.position.x + 100,
-      node.position.y + 37.5,
+      node.position.x + NODE_WIDTH / 2,
+      node.position.y + NODE_HEIGHT / 2,
       {
         duration: 300,
         zoom: 1.5

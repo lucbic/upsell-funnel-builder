@@ -19,8 +19,15 @@
 
   import { Background as VFBackground } from '@vue-flow/background'
 
+  const {
+    NODE_WIDTH,
+    NODE_HEIGHT,
+    DURATION,
+    GRID_SPACING
+  } = useConstants()
+
   const fitViewParams: FitViewParams = {
-    duration: 300,
+    duration: DURATION.FIT_VIEW,
     padding: '100px'
   }
 
@@ -32,10 +39,10 @@
     addSelectedNodes,
     removeSelectedNodes,
     getNodes,
-    fitView
+    fitView,
+    onInit
   } = useVueFlow()
 
-  const { NODE_WIDTH, NODE_HEIGHT } = useConstants()
   const store = useFunnelStore()
   const toast = useToast()
 
@@ -69,10 +76,7 @@
     }
 
     for (const change of removeChanges) {
-      const removeChange = change as {
-        type: 'remove'
-        id: string
-      }
+      const removeChange = change
       if (removeChange.id) {
         store.deleteNode(removeChange.id)
       }
@@ -120,26 +124,28 @@
   watch(
     () => store.currentFunnelId,
     async () => {
-      if (!store.isLoading) return
-
-      await wait(100)
+      // NextTick didn't do the trick here, so we're using a timeout to schedule a macrotask in the event loop ¯\_(ツ)_/¯
+      await wait(0)
       fitView(fitViewParams)
-      await wait(350)
+      await wait(DURATION.LOADING_DELAY)
 
       store.isLoading = false
     }
   )
 
-  onMounted(async () => {
+  onInit(async () => {
     if (store.nodes.length === 0) return
 
-    await wait(100)
+    await nextTick()
 
     fitView(fitViewParams)
   })
 
   const onNodeFocusIn = (event: FocusEvent) => {
-    const target = event.target as HTMLElement
+    const target = event.target
+
+    if (!(target instanceof HTMLElement)) return
+
     const nodeEl = target.closest('.vue-flow__node')
     if (!nodeEl) return
 
@@ -190,12 +196,12 @@
         animated: true,
         markerEnd: {
           type: MarkerType.ArrowClosed,
-          width: 25,
-          height: 25
+          width: GRID_SPACING,
+          height: GRID_SPACING
         }
       }"
       :apply-default="false"
-      :snap-grid="[25, 25]"
+      :snap-grid="[GRID_SPACING, GRID_SPACING]"
       :min-zoom="0.75"
       :max-zoom="1.5"
       :fit-view-params="fitViewParams"
@@ -233,7 +239,7 @@
 
       <VFBackground
         pattern-color="var(--ui-border)"
-        :gap="25"
+        :gap="GRID_SPACING"
         variant="lines"
         class="pointer-events-none"
       />

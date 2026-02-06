@@ -8,6 +8,8 @@
   }>()
 
   const { zoomIn, zoomOut, fitView } = useVueFlow()
+
+  const { DURATION } = useConstants()
 </script>
 
 <template>
@@ -24,7 +26,9 @@
         class="vue-flow__controls-button
           vue-flow__controls-zoomin"
         aria-label="Zoom in"
-        @click="zoomIn({ duration: 100 })"
+        @click="
+          zoomIn({ duration: DURATION.ZOOM_TRANSITION })
+        "
       >
         <UIcon
           name="i-lucide-zoom-in"
@@ -39,7 +43,9 @@
         class="vue-flow__controls-button
           vue-flow__controls-zoomout"
         aria-label="Zoom out"
-        @click="zoomOut({ duration: 100 })"
+        @click="
+          zoomOut({ duration: DURATION.ZOOM_TRANSITION })
+        "
       >
         <UIcon
           name="i-lucide-zoom-out"
