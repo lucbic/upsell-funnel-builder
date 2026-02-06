@@ -114,6 +114,8 @@
   watch(
     () => store.currentFunnelId,
     async () => {
+      if (!store.isLoading) return
+
       await new Promise(resolve => setTimeout(resolve, 100))
       fitView({ duration: 300, padding: '100px' })
       await new Promise(resolve => setTimeout(resolve, 350))
