@@ -13,7 +13,8 @@ export const useNodeTypeConfig = (): Record<
     defaultButtonLabel: 'Order Now',
     defaultTitle: 'Sales Page',
     allowsOutgoing: true,
-    maxOutgoingEdges: 1
+    maxOutgoingEdges: 1,
+    maxIncomingEdges: 0
   },
   'order-page': {
     label: 'Order Page',
@@ -22,6 +23,7 @@ export const useNodeTypeConfig = (): Record<
     defaultTitle: 'Order Page',
     allowsOutgoing: true,
     maxOutgoingEdges: 2,
+    maxIncomingEdges: 1,
     handles: [
       { id: 'accepted', label: 'Purchased', icon: 'i-lucide-check', color: 'success', position: 'right' },
       { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }

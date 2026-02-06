@@ -224,26 +224,33 @@ export const validateMultipleEntryPoints: FunnelValidator =
 export const validateIncompleteOfferPaths: FunnelValidator =
   ({ nodes, edges }) => {
     const issues: FunnelValidationIssue[] = []
-    const offerTypes: Funnel.NodeType[] = [
-      'upsell',
-      'downsell'
-    ]
+    const nodeTypeConfig = useNodeTypeConfig()
 
     for (const node of nodes) {
-      if (
-        !offerTypes.includes(node.type as Funnel.NodeType)
-      )
-        continue
+      const config =
+        nodeTypeConfig[node.type as Funnel.NodeType]
+      if (!config?.handles) continue
 
-      const outgoingCount = edges.filter(
+      const nodeEdges = edges.filter(
         e => e.source === node.id
-      ).length
+      )
 
-      if (outgoingCount === 1) {
+      const connectedHandles = new Set(
+        nodeEdges.map(e => e.sourceHandle)
+      )
+
+      const missingHandles = config.handles.filter(
+        h => !connectedHandles.has(h.id)
+      )
+
+      if (
+        missingHandles.length > 0 &&
+        missingHandles.length < config.handles.length
+      ) {
         issues.push({
           id: `incomplete-offer-${node.id}`,
           severity: 'warning',
-          message: `"${getNodeName(node)}" should have both accept and decline paths`,
+          message: `"${getNodeName(node)}" is missing the ${missingHandles.map(h => h.label.toLowerCase()).join(' and ')} path`,
           nodeId: node.id,
           nodeName: getNodeName(node)
         })

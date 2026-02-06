@@ -142,14 +142,23 @@ export const noSourceToSource: Validator = context => {
   return { valid: true }
 }
 
-export const maxOneIncoming: Validator = context => {
-  const existing = context.edges.find(
-    e => e.target === context.connection.target
-  )
+export const maxIncomingEdges: Validator = context => {
+  const nodeTypeConfig = useNodeTypeConfig()
+  const targetType = context.targetNode?.type as Funnel.NodeType
+  const config = nodeTypeConfig[targetType]
+  const max = config?.maxIncomingEdges
 
-  if (existing)
+  if (max === undefined) return { valid: true }
+
+  const incomingCount = context.edges.filter(
+    e => e.target === context.connection.target
+  ).length
+
+  if (incomingCount >= max)
     return invalidConnection(
-      'This node already has an incoming connection'
+      max === 0
+        ? `${config.label} cannot have incoming connections`
+        : `${config.label} can only have ${max} incoming connection${max > 1 ? 's' : ''}`
     )
 
   return { valid: true }
@@ -183,6 +192,6 @@ export const getConnectionValidator = () =>
     salesPageTarget,
     salesPageMaxConnections,
     noDuplicateConnection,
-    maxOneIncoming,
+    maxIncomingEdges,
     handleMaxOneEdge
   )

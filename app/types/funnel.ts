@@ -30,6 +30,7 @@ declare global {
       defaultTitle: string
       allowsOutgoing: boolean
       maxOutgoingEdges?: number
+      maxIncomingEdges?: number
       autoIncrement?: boolean
       handles?: HandleDef[]
     }
