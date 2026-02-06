@@ -2,8 +2,7 @@
   const toast = useToast()
   const store = useFunnelStore()
   const { start, finish } = useLoadingIndicator()
-
-  const open = ref(false)
+  const { isDesktop } = useDevice()
 
   watch(
     () => store.isLoading,
@@ -25,16 +24,7 @@
 
 <template>
   <UDashboardGroup unit="rem">
-    <UDashboardSidebar
-      id="palette"
-      side="left"
-      role="complementary"
-      class="bg-elevated/25"
-      :default-size="18"
-      aria-label="Node palette"
-    >
-      <NodePalette />
-    </UDashboardSidebar>
+    <BuilderLayoutDesktopSidebars v-if="isDesktop" />
 
     <UMain
       class="relative h-full w-full"
@@ -46,19 +36,8 @@
       />
 
       <BuilderPanel />
-    </UMain>
 
-    <UDashboardSidebar
-      id="default"
-      v-model:open="open"
-      collapsible
-      :default-size="18"
-      side="right"
-      role="complementary"
-      class="bg-elevated/25 border-default border-l"
-      aria-label="Funnel manager"
-    >
-      <FunnelManager />
-    </UDashboardSidebar>
+      <BuilderLayoutMobileDrawers v-if="!isDesktop" />
+    </UMain>
   </UDashboardGroup>
 </template>
