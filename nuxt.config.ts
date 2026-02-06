@@ -13,6 +13,18 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
 
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: 'en'
+      },
+      title: 'Upsell Funnel Builder',
+      meta: [
+        { name: 'description', content: 'Build and visualize your sales funnel with upsells and downsells' }
+      ]
+    }
+  },
+
   ssr: false,
 
   css: ['~/assets/css/main.css'],
