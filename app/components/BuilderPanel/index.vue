@@ -123,12 +123,21 @@
     async () => {
       if (!store.isLoading) return
 
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await wait(100)
       fitView(fitViewParams)
-      await new Promise(resolve => setTimeout(resolve, 350))
+      await wait(350)
+
       store.isLoading = false
     }
   )
+
+  onMounted(async () => {
+    if (store.nodes.length === 0) return
+
+    await wait(100)
+
+    fitView(fitViewParams)
+  })
 
   const onNodeFocusIn = (event: FocusEvent) => {
     const target = event.target as HTMLElement
