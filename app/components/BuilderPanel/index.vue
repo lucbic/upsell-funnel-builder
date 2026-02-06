@@ -17,8 +17,6 @@
   import '@vue-flow/minimap/dist/style.css'
 
   import { Background as VFBackground } from '@vue-flow/background'
-  import { Controls as VFControls } from '@vue-flow/controls'
-  // import { MiniMap as VFMinimap } from '@vue-flow/minimap'
 
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
 
@@ -27,6 +25,9 @@
     onConnect,
     applyNodeChanges,
     applyEdgeChanges,
+    addSelectedNodes,
+    removeSelectedNodes,
+    getNodes,
     fitView
   } = useVueFlow()
 
@@ -123,19 +124,40 @@
     }
   )
 
+  const onNodeFocusIn = (event: FocusEvent) => {
+    const target = event.target as HTMLElement
+    const nodeEl = target.closest('.vue-flow__node')
+    if (!nodeEl) return
+
+    const nodeId = nodeEl.getAttribute('data-id')
+    if (!nodeId) return
+
+    const node = getNodes.value.find(n => n.id === nodeId)
+    if (!node) return
+
+    removeSelectedNodes(getNodes.value)
+    addSelectedNodes([node])
+  }
+
   const colorMode = useColorMode()
 </script>
 
 <template>
   <div
+    role="application"
+    aria-label="Funnel builder canvas"
+    :aria-busy="store.isLoading"
+    aria-roledescription="flow chart editor"
     class="relative h-full w-full transition-opacity
       duration-300"
     :class="
       store.isLoading && 'pointer-events-none opacity-10'
     "
+    @focusin="onNodeFocusIn"
   >
     <UInput
       v-model="store.funnelName"
+      aria-label="Funnel name"
       size="lg"
       trailing-icon="i-lucide-pencil"
       variant="subtle"
@@ -163,6 +185,8 @@
       :max-zoom="1.5"
       :fit-view-params="{ duration: 300, padding: '100px' }"
       elevate-edges-on-select
+      nodes-focusable
+      edges-focusable
       pan-on-scroll
       zoom-on-scroll
       snap-to-grid
@@ -199,16 +223,7 @@
         class="pointer-events-none"
       />
 
-      <VFControls
-        position="top-right"
-        :show-interactive="false"
-        :fit-view-params="{
-          duration: 300,
-          padding: '100px'
-        }"
-        class="border-muted overflow-hidden rounded-full
-          border-2"
-      />
+      <BuilderPanelFlowControls />
 
       <BuilderPanelValidationPane />
     </VueFlow>
@@ -221,21 +236,10 @@
     z-index: 50;
   }
 
-  :deep(.vue-flow__controls-button) {
-    background-color: var(--ui-bg-elevated) !important;
-    border-color: var(--ui-border-muted) !important;
-    border-width: 2px !important;
-
-    &:last-child {
-      border-bottom: none !important;
-    }
-
-    & > svg {
-      fill: var(--ui-text) !important;
-    }
-
-    &:hover {
-      background-color: var(--ui-bg-accented) !important;
-    }
+  :deep(.vue-flow__node:focus-visible) {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ui-primary);
+    border-radius: 0.5rem;
   }
+
 </style>

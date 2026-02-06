@@ -67,6 +67,9 @@
   >
     <UCollapsible v-model:open="isExpanded" class="group">
       <button
+        type="button"
+        :aria-expanded="isExpanded"
+        aria-controls="validation-content"
         class="hover:bg-accented flex w-full cursor-pointer
           items-center gap-2 px-3 py-2 transition-colors"
       >
@@ -74,6 +77,7 @@
           :name="statusIcon"
           :class="statusColor"
           class="size-5"
+          aria-hidden="true"
         />
 
         <span class="text-sm font-medium">
@@ -84,11 +88,15 @@
           name="i-lucide-chevron-up"
           class="ml-auto size-4 transition-transform
             duration-200 group-data-[state=open]:rotate-180"
+          aria-hidden="true"
         />
       </button>
 
       <template #content>
         <div
+          id="validation-content"
+          role="region"
+          aria-label="Validation results"
           class="border-muted max-h-64 overflow-y-auto
             border-t px-3 py-2"
         >
@@ -105,11 +113,20 @@
             <div
               v-for="error in errors"
               :key="error.id"
-              class="hover:bg-accented mb-1 flex
+              role="button"
+              tabindex="0"
+              :aria-label="error.message"
+              class="hover:bg-accented
+                focus-visible:ring-primary mb-1 flex
                 cursor-pointer items-start gap-2 rounded
-                p-1.5 transition-colors"
+                p-1.5 transition-colors focus-visible:ring-2
+                focus-visible:outline-none"
               :class="{ 'cursor-pointer': error.nodeId }"
               @click="focusNode(error.nodeId)"
+              @keydown.enter="focusNode(error.nodeId)"
+              @keydown.space.prevent="
+                focusNode(error.nodeId)
+              "
             >
               <UIcon
                 name="i-lucide-x-circle"
@@ -138,11 +155,20 @@
             <div
               v-for="warning in warnings"
               :key="warning.id"
-              class="hover:bg-accented mb-1 flex
+              role="button"
+              tabindex="0"
+              :aria-label="warning.message"
+              class="hover:bg-accented
+                focus-visible:ring-primary mb-1 flex
                 cursor-pointer items-start gap-2 rounded
-                p-1.5 transition-colors"
+                p-1.5 transition-colors focus-visible:ring-2
+                focus-visible:outline-none"
               :class="{ 'cursor-pointer': warning.nodeId }"
               @click="focusNode(warning.nodeId)"
+              @keydown.enter="focusNode(warning.nodeId)"
+              @keydown.space.prevent="
+                focusNode(warning.nodeId)
+              "
             >
               <UIcon
                 name="i-lucide-alert-circle"
@@ -158,6 +184,7 @@
 
           <div
             v-if="!hasErrors && !hasWarnings"
+            role="status"
             class="flex items-center gap-2 py-2
               text-green-500"
           >

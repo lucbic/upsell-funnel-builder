@@ -15,6 +15,12 @@
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
   const nodeTypeConfig = useNodeTypeConfig()
 
+  const config = computed(() =>
+    data?.nodeType
+      ? nodeTypeConfig[data.nodeType]
+      : undefined
+  )
+
   const nodeStyle = computed(() => ({
     width: palette ? '100%' : `${NODE_WIDTH}px`,
     height: palette
@@ -39,6 +45,11 @@
     () => !!handles.value?.length
   )
 
+  const nodeAriaLabel = computed(() => {
+    if (!data?.title || !config.value) return undefined
+    return `${data.title} - ${config.value.label} node`
+  })
+
   const HANDLE_POSITION_MAP: Record<string, Position> = {
     right: Position.Right,
     bottom: Position.Bottom
@@ -47,17 +58,22 @@
 
 <template>
   <div
+    role="button"
+    :aria-label="nodeAriaLabel"
+    :aria-selected="!palette ? selected : undefined"
     :style="nodeStyle"
     :class="{ 'node-selected': selected }"
-    class="border-muted bg-elevated flex cursor-move
-      flex-col rounded-lg border shadow-lg transition-shadow
-      hover:shadow-xl"
+    class="border-muted bg-elevated focus-visible:ring-primary
+      flex cursor-move flex-col rounded-lg border shadow-lg
+      transition-shadow hover:shadow-xl focus-visible:ring-2
+      focus-visible:outline-none"
   >
     <Handle
       v-if="!palette && data?.nodeType !== 'sales-page'"
       class="border-none!"
       type="target"
       :position="Position.Left"
+      aria-label="Input connection"
     />
 
     <!-- Single source handle for non-branching nodes -->
@@ -70,6 +86,7 @@
       class="border-none!"
       type="source"
       :position="Position.Right"
+      aria-label="Output connection"
     />
 
     <!-- Branching source handles -->
@@ -81,6 +98,7 @@
       :id="handle.id"
       type="source"
       :position="HANDLE_POSITION_MAP[handle.position]"
+      :aria-label="`${handle.label} output`"
       :class="[
         'custom-handle',
         handle.color === 'success'
