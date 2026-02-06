@@ -12,6 +12,7 @@
         icon="i-lucide-blocks"
         color="neutral"
         variant="subtle"
+        aria-label="Open node palette"
         @click="emit('openPalette')"
       />
 
@@ -19,6 +20,7 @@
         icon="i-lucide-folder"
         color="neutral"
         variant="subtle"
+        aria-label="Open funnel manager"
         @click="emit('openManager')"
       />
     </UFieldGroup>
