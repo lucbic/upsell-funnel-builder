@@ -8,9 +8,12 @@ import type {
   ValidationContext
 } from '~/utils/connectionValidation'
 
-import { MarkerType } from '@vue-flow/core'
 import { useStorage } from '@vueuse/core'
 import { getConnectionValidator } from '~/utils/connectionValidation'
+import {
+  deserializeNodes,
+  deserializeEdges
+} from '~/utils/funnelSerialization'
 
 const STORAGE_KEY_PREFIX = 'funnel_'
 const STORAGE_INDEX_KEY = 'funnel_index'
@@ -190,24 +193,8 @@ export const useFunnelStore = defineStore('funnel', () => {
     nodeTypeCounts.value = { ...funnel.nodeTypeCounts }
     nodeIdCounter.value = funnel.nodeIdCounter
 
-    nodes.value = funnel.nodes.map(node => ({
-      ...node,
-      type: node.data?.nodeType!,
-      ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.data?.nodeType!]?.label ?? node.data?.nodeType!}`
-    }))
-
-    edges.value = funnel.edges.map(edge => ({
-      ...edge,
-      type: 'smoothstep',
-      selectable: true,
-      deletable: true,
-      animated: true,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20
-      }
-    }))
+    nodes.value = deserializeNodes(funnel.nodes, nodeTypeConfig)
+    edges.value = deserializeEdges(funnel.edges)
 
     if (!silent) {
       toast.add({
@@ -309,24 +296,8 @@ export const useFunnelStore = defineStore('funnel', () => {
       }
       nodeIdCounter.value = data.nodeIdCounter || 0
 
-      nodes.value = data.nodes.map(node => ({
-        ...node,
-        type: node.data?.nodeType!,
-        ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.data?.nodeType!]?.label ?? node.data?.nodeType!}`
-      }))
-
-      edges.value = data.edges.map(edge => ({
-        ...edge,
-        type: 'smoothstep',
-        selectable: true,
-        deletable: true,
-        animated: true,
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20
-        }
-      }))
+      nodes.value = deserializeNodes(data.nodes, nodeTypeConfig)
+      edges.value = deserializeEdges(data.edges)
 
       saveFunnel()
 
@@ -344,7 +315,7 @@ export const useFunnelStore = defineStore('funnel', () => {
     }
   }
 
-  const { NODE_WIDTH, KEYBOARD_INSERT_NODE_GAP } =
+  const { NODE_WIDTH, KEYBOARD_INSERT_NODE_GAP, EDGE_DEFAULTS } =
     useConstants()
 
   const createNode = (
@@ -421,15 +392,7 @@ export const useFunnelStore = defineStore('funnel', () => {
       target: connection.target,
       sourceHandle: connection.sourceHandle,
       targetHandle: connection.targetHandle,
-      type: 'smoothstep',
-      selectable: true,
-      deletable: true,
-      animated: true,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20
-      }
+      ...EDGE_DEFAULTS
     }
 
     edges.value.push(newEdge)

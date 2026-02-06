@@ -1,3 +1,5 @@
+import { MarkerType } from '@vue-flow/core'
+
 export const useConstants = () =>
   ({
     GRID_SPACING: 25,
@@ -8,5 +10,16 @@ export const useConstants = () =>
       FIT_VIEW: 300,
       LOADING_DELAY: 350,
       ZOOM_TRANSITION: 100
+    },
+    EDGE_DEFAULTS: {
+      type: 'smoothstep',
+      selectable: true,
+      deletable: true,
+      animated: true,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 20,
+        height: 20
+      }
     }
   }) as const

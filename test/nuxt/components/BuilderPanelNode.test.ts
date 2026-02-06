@@ -23,7 +23,8 @@ vi.mock('@vue-flow/core', () => {
   })
   return {
     Handle: HandleStub,
-    Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' }
+    Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' },
+    MarkerType: { ArrowClosed: 'arrowclosed' }
   }
 })
 

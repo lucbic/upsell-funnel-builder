@@ -30,7 +30,10 @@ vi.mock('@vue-flow/core', () => ({
     addSelectedNodes: mockAddSelectedNodes,
     removeSelectedNodes: mockRemoveSelectedNodes,
     getNodes: mockGetNodes
-  })
+  }),
+  MarkerType: {
+    ArrowClosed: 'arrowclosed'
+  }
 }))
 
 type ValidationIssue = {

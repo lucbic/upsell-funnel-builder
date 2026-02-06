@@ -39,6 +39,9 @@ vi.mock('@vue-flow/core', async () => {
       Right: 'right',
       Top: 'top',
       Bottom: 'bottom'
+    },
+    MarkerType: {
+      ArrowClosed: 'arrowclosed'
     }
   }
 })
