@@ -1,13 +1,24 @@
 import { describe, it, expect } from 'vitest'
-import { useNodeSizes, useNodeTypeConfig } from '~/utils/nodeConfigs'
+import { useNodeTypeConfig } from '~/utils/nodeConfigs'
+import { useConstants } from '~/utils/constants'
 
-describe('useNodeSizes', () => {
+describe('constants', () => {
+  const {
+    NODE_WIDTH,
+    NODE_HEIGHT,
+    KEYBOARD_INSERT_NODE_GAP
+  } = useConstants()
+
   it('returns NODE_WIDTH=200', () => {
-    expect(useNodeSizes().NODE_WIDTH).toBe(200)
+    expect(NODE_WIDTH).toBe(200)
   })
 
   it('returns NODE_HEIGHT=75', () => {
-    expect(useNodeSizes().NODE_HEIGHT).toBe(75)
+    expect(NODE_HEIGHT).toBe(75)
+  })
+
+  it('returns KEYBOARD_INSERT_NODE_GAP=75', () => {
+    expect(KEYBOARD_INSERT_NODE_GAP).toBe(75)
   })
 })
 

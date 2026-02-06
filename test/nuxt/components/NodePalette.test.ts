@@ -1,9 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
+import {
+  mountSuspended,
+  mockNuxtImport
+} from '@nuxt/test-utils/runtime'
 import NodePalette from '~/components/NodePalette.vue'
 
 const mockCreateNode = vi.fn()
-const mockScreenToFlowCoordinate = vi.fn(() => ({ x: 500, y: 500 }))
+const mockScreenToFlowCoordinate = vi.fn(() => ({
+  x: 500,
+  y: 500
+}))
 
 vi.mock('@vue-flow/core', async () => {
   const { defineComponent, h } = await import('vue')
@@ -12,11 +18,15 @@ vi.mock('@vue-flow/core', async () => {
     props: ['type', 'position', 'id'],
     setup(props, { attrs, slots }) {
       return () =>
-        h('div', {
-          class: 'handle-stub',
-          'data-handle-type': props.type,
-          'aria-label': attrs['aria-label']
-        }, slots.default?.())
+        h(
+          'div',
+          {
+            class: 'handle-stub',
+            'data-handle-type': props.type,
+            'aria-label': attrs['aria-label']
+          },
+          slots.default?.()
+        )
     }
   })
   return {
@@ -24,15 +34,28 @@ vi.mock('@vue-flow/core', async () => {
       screenToFlowCoordinate: mockScreenToFlowCoordinate
     }),
     Handle: HandleStub,
-    Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' }
+    Position: {
+      Left: 'left',
+      Right: 'right',
+      Top: 'top',
+      Bottom: 'bottom'
+    }
   }
 })
 
 const mockToastAdd = vi.fn()
-mockNuxtImport('useToast', () => () => ({ add: mockToastAdd }))
-mockNuxtImport('useDebounceFn', () => (fn: () => void) => fn)
+mockNuxtImport('useToast', () => () => ({
+  add: mockToastAdd
+}))
+mockNuxtImport(
+  'useDebounceFn',
+  () => (fn: () => void) => fn
+)
 mockNuxtImport('useFunnelStore', () => () => ({
   createNode: mockCreateNode,
+  addNodeToCanvas: (type: string) => {
+    mockCreateNode(type, { x: 0, y: 0 })
+  },
   nodes: [],
   edges: [],
   funnelName: 'Test'
@@ -42,7 +65,9 @@ describe('NodePalette', () => {
   describe('rendering', () => {
     it('renders all 5 node types', async () => {
       const wrapper = await mountSuspended(NodePalette)
-      const draggables = wrapper.findAll('[draggable="true"]')
+      const draggables = wrapper.findAll(
+        '[draggable="true"]'
+      )
       expect(draggables.length).toBe(5)
     })
 
@@ -64,7 +89,9 @@ describe('NodePalette', () => {
   describe('drag handlers', () => {
     it('sets dataTransfer on dragstart', async () => {
       const wrapper = await mountSuspended(NodePalette)
-      const firstDraggable = wrapper.find('[draggable="true"]')
+      const firstDraggable = wrapper.find(
+        '[draggable="true"]'
+      )
 
       const setData = vi.fn()
       await firstDraggable.trigger('dragstart', {
@@ -100,8 +127,11 @@ describe('NodePalette', () => {
       document.body.appendChild(mockEl)
 
       const wrapper = await mountSuspended(NodePalette)
-      const firstDraggable = wrapper.find('[draggable="true"]')
+      const firstDraggable = wrapper.find(
+        '[draggable="true"]'
+      )
 
+      await firstDraggable.element.focus()
       await firstDraggable.trigger('keydown.enter')
 
       expect(mockCreateNode).toHaveBeenCalled()
@@ -116,7 +146,9 @@ describe('NodePalette', () => {
       const items = wrapper.findAll('[draggable="true"]')
 
       for (const item of items) {
-        expect(item.attributes('aria-label')).toContain('Add')
+        expect(item.attributes('aria-label')).toContain(
+          'Add'
+        )
         expect(item.attributes('aria-label')).toContain(
           'to canvas'
         )
