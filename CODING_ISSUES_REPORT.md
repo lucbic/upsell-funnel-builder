@@ -9,56 +9,6 @@ This report documents coding bad practices, potential issues, and areas for impr
 
 ## 🔴 Critical Issues
 
-### 1. Direct DOM Manipulation
-
-**Location:** `app/components/NodePalette.vue:26`
-
-**Issue:** Using `document.querySelector` directly instead of Vue refs or composables.
-
-```typescript
-const vueFlowEl = document.querySelector('.vue-flow')
-```
-
-**Problem:**
-
-- Breaks SSR compatibility
-- Not reactive to DOM changes
-- Harder to test
-- Violates Vue's declarative paradigm
-
-**Recommendation:**
-
-- Use template refs (`ref<HTMLElement>()`) or Vue Flow's composable methods
-- Access the Vue Flow instance through `useVueFlow()` composable
-
----
-
-### 2. Accessibility Module Disabled
-
-**Location:** `nuxt.config.ts:16-18`
-
-**Issue:** The `@nuxt/a11y` module is installed but explicitly disabled.
-
-```typescript
-a11y: {
-  enabled: false
-}
-```
-
-**Problem:**
-
-- Missing automated accessibility checks
-- Potential accessibility violations go undetected
-- Contradicts project's accessibility goals (mentioned in README)
-
-**Recommendation:**
-
-- Enable the module in development
-- Fix any reported accessibility issues
-- Consider keeping it enabled for production builds
-
----
-
 ### 3. localStorage Access Without SSR Guards
 
 **Location:** `app/stores/funnel.ts` (multiple locations)
