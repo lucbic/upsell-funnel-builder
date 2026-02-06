@@ -1,8 +1,30 @@
 <script setup lang="ts">
+  import {
+    DialogTitle,
+    DialogDescription,
+    VisuallyHidden
+  } from 'reka-ui'
+
   const paletteOpen = ref(false)
   const managerOpen = ref(false)
 
   const { isDesktop } = useDevice()
+
+  const blurActiveElement = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+  }
+
+  const openPalette = () => {
+    blurActiveElement()
+    paletteOpen.value = true
+  }
+
+  const openManager = () => {
+    blurActiveElement()
+    managerOpen.value = true
+  }
 </script>
 
 <template>
@@ -14,6 +36,14 @@
     :handle="false"
   >
     <template #content>
+      <VisuallyHidden>
+        <DialogTitle>Node palette</DialogTitle>
+
+        <DialogDescription>
+          Select a node type to add to your funnel
+        </DialogDescription>
+      </VisuallyHidden>
+
       <div class="h-full p-4">
         <NodePalette />
       </div>
@@ -28,6 +58,14 @@
     :handle="false"
   >
     <template #content>
+      <VisuallyHidden>
+        <DialogTitle>Funnel manager</DialogTitle>
+
+        <DialogDescription>
+          Manage your funnel configurations
+        </DialogDescription>
+      </VisuallyHidden>
+
       <div class="h-full p-4">
         <FunnelManager />
       </div>
@@ -36,7 +74,7 @@
 
   <BuilderLayoutMobileToggleButtons
     v-if="!isDesktop"
-    @openPalette="paletteOpen = true"
-    @openManager="managerOpen = true"
+    @openPalette="openPalette"
+    @openManager="openManager"
   />
 </template>
