@@ -36,5 +36,6 @@ bun run typecheck  # TypeScript type checking
 
 - **No undo/redo** - The graph editor currently lacks history. Implementing a command pattern on top of the store would solve this. An immutability library like Immer would be a good fit, or maybe a pinia plugin (like pinia-undo) with dynamic stores for each funnel.
 - **No minimap** - The app currently lacks a minimap. I wasn't happy with how the vue-flow minimap style customisation worked, so I decided to not include it for now.
+- **No linting** - The app currently lacks linting. I use Prettier for auto-formatting. Since I worked as a solo developer, I decided to not include it for now.
 - **No E2E tests** - Unit tests exist, but there are no end-to-end tests covering the full drag-drop-connect flow. The development already took me a good amount of time, so I decided to not include it for now.
 - **No full accessibility features** - It's possible to add nodes to the canvas, navigate through them, and even move them around with the keyboard, but it's not possible to add nodes connections. In a production-grade app, I would spent more time to make it fully accessible.
