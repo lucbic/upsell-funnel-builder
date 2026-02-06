@@ -13,6 +13,7 @@
   } = defineProps<Props>()
 
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
+  const nodeTypeConfig = useNodeTypeConfig()
 
   const nodeStyle = computed(() => ({
     width: palette ? '100%' : `${NODE_WIDTH}px`,
@@ -27,6 +28,21 @@
   const themeColor = computed(() =>
     useNodeTheme(data?.nodeType)
   )
+
+  const handles = computed(() =>
+    data?.nodeType
+      ? nodeTypeConfig[data.nodeType]?.handles
+      : undefined
+  )
+
+  const isBranching = computed(
+    () => !!handles.value?.length
+  )
+
+  const HANDLE_POSITION_MAP: Record<string, Position> = {
+    right: Position.Right,
+    bottom: Position.Bottom
+  }
 </script>
 
 <template>
@@ -38,18 +54,45 @@
       hover:shadow-xl"
   >
     <Handle
-      v-if="!palette"
+      v-if="!palette && data?.nodeType !== 'sales-page'"
       class="border-none!"
       type="target"
       :position="Position.Left"
     />
 
+    <!-- Single source handle for non-branching nodes -->
     <Handle
-      v-if="!palette && data?.nodeType !== 'thank-you'"
+      v-if="
+        !palette &&
+        !isBranching &&
+        data?.nodeType !== 'thank-you'
+      "
       class="border-none!"
       type="source"
       :position="Position.Right"
     />
+
+    <!-- Branching source handles -->
+    <Handle
+      v-for="handle in !palette && isBranching
+        ? handles
+        : []"
+      :key="handle.id"
+      :id="handle.id"
+      type="source"
+      :position="HANDLE_POSITION_MAP[handle.position]"
+      :class="[
+        'custom-handle',
+        handle.color === 'success'
+          ? 'custom-handle--success'
+          : 'custom-handle--error'
+      ]"
+    >
+      <UIcon
+        :name="handle.icon"
+        class="pointer-events-none size-3 font-extrabold"
+      />
+    </Handle>
 
     <div
       :class="{ 'border-muted border-b': !palette }"
@@ -91,5 +134,25 @@
       border-radius: inherit;
       pointer-events: none;
     }
+  }
+
+  :deep(.custom-handle) {
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+  }
+
+  :deep(.custom-handle--success) {
+    background-color: var(--ui-success) !important;
+    color: white !important;
+  }
+
+  :deep(.custom-handle--error) {
+    background-color: var(--ui-error) !important;
+    color: white !important;
   }
 </style>
