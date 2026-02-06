@@ -7,7 +7,7 @@ export default defineAppConfig({
     },
     toaster: {
       defaultVariants: {
-        position: 'bottom-left'
+        position: 'bottom-right'
       }
     },
     dashboardSidebar: {
