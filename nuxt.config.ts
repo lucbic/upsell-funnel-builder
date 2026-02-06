@@ -29,6 +29,14 @@ export default defineNuxtConfig({
     }
   },
 
+  runtimeConfig: {
+    public: {
+      portfolioUrl: 'https://advaita.dev/portfolio',
+      linkedinUrl: 'https://www.linkedin.com/in/lucbic/',
+      githubUrl: 'https://github.com/lucbic'
+    }
+  },
+
   ssr: false,
 
   css: ['~/assets/css/main.css'],

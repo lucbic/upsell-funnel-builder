@@ -44,8 +44,9 @@
         </DialogDescription>
       </VisuallyHidden>
 
-      <div class="h-full p-4">
+      <div class="flex h-full flex-col justify-between p-4">
         <NodePalette />
+        <DevLinks />
       </div>
     </template>
   </UDrawer>

@@ -34,7 +34,10 @@
       :toggle="false"
       aria-label="Node palette"
     >
-      <NodePalette />
+      <div class="flex h-full flex-col justify-between">
+        <NodePalette />
+        <DevLinks />
+      </div>
     </UDashboardSidebar>
 
     <UMain
