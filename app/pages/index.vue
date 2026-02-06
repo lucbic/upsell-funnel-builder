@@ -37,7 +37,6 @@
     </UDashboardSidebar>
 
     <UMain
-      role="main"
       class="relative h-full w-full"
       aria-label="Funnel canvas"
     >

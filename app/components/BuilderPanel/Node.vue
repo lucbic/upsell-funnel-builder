@@ -60,12 +60,12 @@
   <div
     role="button"
     :aria-label="nodeAriaLabel"
-    :aria-selected="!palette ? selected : undefined"
     :style="nodeStyle"
     :class="{ 'node-selected': selected }"
-    class="border-muted bg-elevated focus-visible:ring-primary
-      flex cursor-move flex-col rounded-lg border shadow-lg
-      transition-shadow hover:shadow-xl focus-visible:ring-2
+    class="border-muted bg-elevated
+      focus-visible:ring-primary flex cursor-move flex-col
+      rounded-lg border shadow-lg transition-shadow
+      hover:shadow-xl focus-visible:ring-2
       focus-visible:outline-none"
   >
     <Handle
@@ -134,7 +134,7 @@
       <UBadge
         :label="data.primaryButtonLabel"
         :color="themeColor.badge"
-        variant="outline"
+        variant="solid"
       />
     </div>
   </div>
