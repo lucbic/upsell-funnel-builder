@@ -54,6 +54,11 @@
     right: Position.Right,
     bottom: Position.Bottom
   }
+
+  const colorMode = useColorMode()
+  const isLight = computed(
+    () => colorMode.value === 'light'
+  )
 </script>
 
 <template>
@@ -134,7 +139,7 @@
       <UBadge
         :label="data.primaryButtonLabel"
         :color="themeColor.badge"
-        variant="solid"
+        :variant="isLight ? 'solid' : 'subtle'"
       />
     </div>
   </div>
