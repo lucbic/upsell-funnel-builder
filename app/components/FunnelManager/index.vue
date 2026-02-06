@@ -59,6 +59,7 @@
         ref="fileInput"
         type="file"
         accept=".json"
+        aria-label="Import funnel JSON file"
         class="hidden"
         @change="handleFileSelect"
       />
@@ -66,39 +67,40 @@
 
     <USeparator />
 
-    <div
+    <section
+      aria-label="Saved funnels"
       class="-mx-4 flex flex-1 flex-col overflow-hidden
         pt-4"
     >
-      <div class="px-4">
-        <h4
-          class="text-muted mb-3 text-xs font-semibold
-            uppercase"
-        >
-          Saved Funnels
-        </h4>
+      <div class="overflow-y-auto">
+        <div class="mx-4">
+          <h1
+            class="text-muted mb-3 text-xs font-semibold
+              uppercase"
+          >
+            Saved Funnels
+          </h1>
 
-        <UEmpty
-          v-if="funnel.savedFunnels.length === 0"
-          icon="i-lucide-folder"
-          title="No saved funnels"
-          description="Your funnels will appear here once you start building"
-        />
-
-        <div
-          v-else
-          class="flex-1 space-y-2 overflow-y-auto"
-        >
-          <FunnelManagerCard
-            v-for="item in funnel.savedFunnels"
-            :key="item.id"
-            :item="item"
-            :is-current="isCurrentFunnel(item.id)"
-            @select="funnel.loadFunnel"
-            @delete="funnel.deleteFunnel"
+          <UEmpty
+            v-if="funnel.savedFunnels.length === 0"
+            icon="i-lucide-folder"
+            title="No saved funnels"
+            description="Your funnels will appear here once you start building"
           />
+
+          <div v-else class="flex-1">
+            <FunnelManagerCard
+              v-for="item in funnel.savedFunnels"
+              class="mb-2"
+              :key="item.id"
+              :item="item"
+              :is-current="isCurrentFunnel(item.id)"
+              @select="funnel.loadFunnel"
+              @delete="funnel.deleteFunnel"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
