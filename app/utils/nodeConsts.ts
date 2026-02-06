@@ -20,7 +20,12 @@ export const useNodeTypeConfig = (): Record<
     icon: 'i-lucide-shopping-cart',
     defaultButtonLabel: 'Complete Order',
     defaultTitle: 'Order Page',
-    allowsOutgoing: true
+    allowsOutgoing: true,
+    maxOutgoingEdges: 2,
+    handles: [
+      { id: 'accepted', label: 'Purchased', icon: 'i-lucide-check', color: 'success', position: 'right' },
+      { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }
+    ]
   },
   upsell: {
     label: 'Upsell',
@@ -28,7 +33,12 @@ export const useNodeTypeConfig = (): Record<
     defaultButtonLabel: 'Yes, Add This',
     defaultTitle: 'Upsell',
     allowsOutgoing: true,
-    autoIncrement: true
+    autoIncrement: true,
+    maxOutgoingEdges: 2,
+    handles: [
+      { id: 'accepted', label: 'Accepted', icon: 'i-lucide-check', color: 'success', position: 'right' },
+      { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }
+    ]
   },
   downsell: {
     label: 'Downsell',
@@ -36,7 +46,12 @@ export const useNodeTypeConfig = (): Record<
     defaultButtonLabel: 'Take This Deal',
     defaultTitle: 'Downsell',
     allowsOutgoing: true,
-    autoIncrement: true
+    autoIncrement: true,
+    maxOutgoingEdges: 2,
+    handles: [
+      { id: 'accepted', label: 'Accepted', icon: 'i-lucide-check', color: 'success', position: 'right' },
+      { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }
+    ]
   },
   'thank-you': {
     label: 'Thank You',

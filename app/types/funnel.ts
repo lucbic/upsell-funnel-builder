@@ -1,6 +1,11 @@
 declare global {
   namespace Funnel {
-    type NodeType = 'sales-page' | 'order-page' | 'upsell' | 'downsell' | 'thank-you'
+    type NodeType =
+      | 'sales-page'
+      | 'order-page'
+      | 'upsell'
+      | 'downsell'
+      | 'thank-you'
 
     type NodeData = {
       title: string
@@ -8,6 +13,14 @@ declare global {
       primaryButtonLabel?: string
       nodeType: NodeType
       sequenceNumber?: number
+    }
+
+    type HandleDef = {
+      id: string
+      label: string
+      icon: string
+      color: 'success' | 'error'
+      position: 'right' | 'bottom'
     }
 
     type NodeTypeConfig = {
@@ -18,9 +31,9 @@ declare global {
       allowsOutgoing: boolean
       maxOutgoingEdges?: number
       autoIncrement?: boolean
+      handles?: HandleDef[]
     }
 
-    // Serialization types (strip VueFlow runtime props for clean JSON)
     type SerializedNode = {
       id: string
       type: NodeType
@@ -36,7 +49,6 @@ declare global {
       targetHandle?: string | null
     }
 
-    // Full saved funnel data
     type SavedFunnel = {
       id: string
       name: string
@@ -48,7 +60,6 @@ declare global {
       updatedAt: number
     }
 
-    // Lightweight type for list display
     type FunnelListItem = {
       id: string
       name: string
