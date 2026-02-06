@@ -1,4 +1,7 @@
-import type { Node, Edge } from '@vue-flow/core'
+import type {
+  Node as VFNode,
+  Edge as VFEdge
+} from '@vue-flow/core'
 
 export type ValidationSeverity = 'error' | 'warning'
 
@@ -17,20 +20,20 @@ export type FunnelValidationResult = {
 }
 
 export type FunnelValidationContext = {
-  nodes: Node<Funnel.NodeData>[]
-  edges: Edge[]
+  nodes: VFNode<Funnel.NodeData>[]
+  edges: VFEdge[]
 }
 
 type FunnelValidator = (
   context: FunnelValidationContext
 ) => FunnelValidationIssue[]
 
-const getNodeName = (node: Node<Funnel.NodeData>) =>
+const getNodeName = (node: VFNode<Funnel.NodeData>) =>
   node.data?.title ?? node.id
 
 const getReachableNodeIds = (
   entryNodeIds: string[],
-  edges: Edge[]
+  edges: VFEdge[]
 ): Set<string> => {
   const reachable = new Set<string>(entryNodeIds)
   const queue = [...entryNodeIds]
@@ -71,7 +74,7 @@ export const validateMissingEntryPoint: FunnelValidator = ({
   nodes
 }) => {
   const salesPages = nodes.filter(
-    n => n.type === 'sales-page'
+    n => n.data?.nodeType === 'sales-page'
   )
 
   if (salesPages.length === 0 && nodes.length > 0) {
@@ -91,7 +94,7 @@ export const validateMissingTerminal: FunnelValidator = ({
   nodes
 }) => {
   const thankYouPages = nodes.filter(
-    n => n.type === 'thank-you'
+    n => n.data?.nodeType === 'thank-you'
   )
 
   if (thankYouPages.length === 0 && nodes.length > 0) {
@@ -143,9 +146,7 @@ export const validateDeadEndNodes: FunnelValidator = ({
   const terminalTypes: Funnel.NodeType[] = ['thank-you']
 
   for (const node of nodes) {
-    if (
-      terminalTypes.includes(node.type as Funnel.NodeType)
-    )
+    if (terminalTypes.includes(node.data?.nodeType!))
       continue
 
     const hasOutgoing = edges.some(
