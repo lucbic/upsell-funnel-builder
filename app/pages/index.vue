@@ -28,13 +28,19 @@
     <UDashboardSidebar
       id="palette"
       side="left"
+      role="complementary"
       class="bg-elevated/25"
       :default-size="18"
+      aria-label="Node palette"
     >
       <NodePalette />
     </UDashboardSidebar>
 
-    <UMain class="relative h-full w-full">
+    <UMain
+      role="main"
+      class="relative h-full w-full"
+      aria-label="Funnel canvas"
+    >
       <NuxtLoadingIndicator
         color="var(--ui-primary)"
         class="absolute! left-0! z-50 w-full!"
@@ -49,7 +55,9 @@
       collapsible
       :default-size="18"
       side="right"
+      role="complementary"
       class="bg-elevated/25 border-default border-l"
+      aria-label="Funnel manager"
     >
       <FunnelManager />
     </UDashboardSidebar>
