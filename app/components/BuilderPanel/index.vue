@@ -8,7 +8,8 @@
     Connection as VFConnection,
     NodeChange,
     EdgeChange,
-    Node as VFNode
+    Node as VFNode,
+    FitViewParams
   } from '@vue-flow/core'
 
   import '@vue-flow/controls/dist/style.css'
@@ -19,6 +20,11 @@
   import { Background as VFBackground } from '@vue-flow/background'
 
   const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
+
+  const fitViewParams: FitViewParams = {
+    duration: 300,
+    padding: '100px'
+  }
 
   const {
     screenToFlowCoordinate,
@@ -118,7 +124,7 @@
       if (!store.isLoading) return
 
       await new Promise(resolve => setTimeout(resolve, 100))
-      fitView({ duration: 300, padding: '100px' })
+      fitView(fitViewParams)
       await new Promise(resolve => setTimeout(resolve, 350))
       store.isLoading = false
     }
@@ -162,8 +168,9 @@
       trailing-icon="i-lucide-pencil"
       variant="subtle"
       placeholder="Enter funnel name..."
-      class="absolute top-[15px] left-1/2 z-50 w-96
-        -translate-x-1/2 shadow-lg"
+      class="absolute top-[15px] left-1/2 z-50
+        w-[calc(100%-8rem)] max-w-96 -translate-x-1/2
+        shadow-lg"
     />
 
     <VueFlow
@@ -183,7 +190,7 @@
       :snap-grid="[25, 25]"
       :min-zoom="0.75"
       :max-zoom="1.5"
-      :fit-view-params="{ duration: 300, padding: '100px' }"
+      :fit-view-params="fitViewParams"
       elevate-edges-on-select
       nodes-focusable
       edges-focusable
@@ -223,7 +230,9 @@
         class="pointer-events-none"
       />
 
-      <BuilderPanelFlowControls />
+      <BuilderPanelFlowControls
+        :fit-view-params="fitViewParams"
+      />
 
       <BuilderPanelValidationPane />
     </VueFlow>
@@ -241,5 +250,4 @@
     box-shadow: 0 0 0 2px var(--ui-primary);
     border-radius: 0.5rem;
   }
-
 </style>
