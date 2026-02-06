@@ -5,6 +5,7 @@ import type {
 } from '~/utils/connectionValidation'
 
 import { MarkerType } from '@vue-flow/core'
+import { useStorage } from '@vueuse/core'
 import { getConnectionValidator } from '~/utils/connectionValidation'
 
 const STORAGE_KEY_PREFIX = 'funnel_'
@@ -27,7 +28,10 @@ export const useFunnelStore = defineStore('funnel', () => {
 
   const nodeIdCounter = ref(0)
   const currentFunnelId = ref<string | null>(null)
-  const savedFunnels = ref<Funnel.FunnelListItem[]>([])
+  const savedFunnels = useStorage<Funnel.FunnelListItem[]>(
+    STORAGE_INDEX_KEY,
+    []
+  )
   const isLoading = ref(false)
 
   // GETTERS
@@ -88,35 +92,6 @@ export const useFunnelStore = defineStore('funnel', () => {
     }
   }
 
-  const loadSavedFunnelsIndex = () => {
-    try {
-      const indexData = localStorage.getItem(
-        STORAGE_INDEX_KEY
-      )
-      savedFunnels.value = indexData
-        ? JSON.parse(indexData)
-        : []
-    } catch {
-      savedFunnels.value = []
-    }
-  }
-
-  const saveFunnelsIndex = () => {
-    try {
-      localStorage.setItem(
-        STORAGE_INDEX_KEY,
-        JSON.stringify(savedFunnels.value)
-      )
-    } catch (error) {
-      toast.add({
-        title: 'Storage Error',
-        description: 'Failed to save funnels index',
-        color: 'error',
-        icon: 'i-lucide-alert-circle'
-      })
-    }
-  }
-
   const saveFunnel = () => {
     try {
       const funnel = serializeFunnel()
@@ -146,8 +121,6 @@ export const useFunnelStore = defineStore('funnel', () => {
       } else {
         savedFunnels.value.unshift(listItem)
       }
-
-      saveFunnelsIndex()
     } catch (error) {
       toast.add({
         title: 'Storage Error',
@@ -219,7 +192,6 @@ export const useFunnelStore = defineStore('funnel', () => {
       savedFunnels.value = savedFunnels.value.filter(
         f => f.id !== id
       )
-      saveFunnelsIndex()
 
       if (currentFunnelId.value === id) {
         resetToNewFunnel()
@@ -460,19 +432,15 @@ export const useFunnelStore = defineStore('funnel', () => {
     deep: true
   })
 
-  // Initialize on client
-  if (import.meta.client) {
-    loadSavedFunnelsIndex()
-
-    if (savedFunnels.value.length > 0) {
-      const mostRecent = savedFunnels.value.reduce(
-        (latest, current) =>
-          current.updatedAt > latest.updatedAt
-            ? current
-            : latest
-      )
-      loadFunnel(mostRecent.id, { silent: true })
-    }
+  // Load saved funnels
+  if (import.meta.client && savedFunnels.value.length > 0) {
+    const mostRecent = savedFunnels.value.reduce(
+      (latest, current) =>
+        current.updatedAt > latest.updatedAt
+          ? current
+          : latest
+    )
+    loadFunnel(mostRecent.id, { silent: true })
   }
 
   return {
@@ -495,7 +463,6 @@ export const useFunnelStore = defineStore('funnel', () => {
     createNewFunnel,
     resetToNewFunnel,
     exportFunnel,
-    importFunnel,
-    loadSavedFunnelsIndex
+    importFunnel
   }
 })
