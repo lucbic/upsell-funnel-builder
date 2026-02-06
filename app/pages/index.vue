@@ -1,7 +1,17 @@
 <script setup lang="ts">
   const toast = useToast()
+  const store = useFunnelStore()
+  const { start, finish } = useLoadingIndicator()
 
   const open = ref(false)
+
+  watch(
+    () => store.isLoading,
+    loading => {
+      if (loading) start()
+      else finish()
+    }
+  )
 
   onMounted(async () => {
     toast.add({
@@ -24,7 +34,12 @@
       <NodePalette />
     </UDashboardSidebar>
 
-    <UMain class="h-full w-full">
+    <UMain class="relative h-full w-full">
+      <NuxtLoadingIndicator
+        color="var(--ui-primary)"
+        class="absolute! left-0! z-50 w-full!"
+      />
+
       <BuilderPanel />
     </UMain>
 

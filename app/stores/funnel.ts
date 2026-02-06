@@ -28,6 +28,7 @@ export const useFunnelStore = defineStore('funnel', () => {
   const nodeIdCounter = ref(0)
   const currentFunnelId = ref<string | null>(null)
   const savedFunnels = ref<Funnel.FunnelListItem[]>([])
+  const isLoading = ref(false)
 
   // GETTERS
   const hasContent = computed(
@@ -171,6 +172,7 @@ export const useFunnelStore = defineStore('funnel', () => {
       return
     }
 
+    isLoading.value = true
     currentFunnelId.value = funnel.id
     funnelName.value = funnel.name
     nodeTypeCounts.value = { ...funnel.nodeTypeCounts }
@@ -440,6 +442,7 @@ export const useFunnelStore = defineStore('funnel', () => {
     nodeTypeCounts,
     currentFunnelId,
     savedFunnels,
+    isLoading,
     hasContent,
     createNode,
     validateConnection,

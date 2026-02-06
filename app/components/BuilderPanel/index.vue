@@ -117,12 +117,20 @@
     async () => {
       await new Promise(resolve => setTimeout(resolve, 100))
       fitView({ duration: 300, padding: '100px' })
+      await new Promise(resolve => setTimeout(resolve, 350))
+      store.isLoading = false
     }
   )
 </script>
 
 <template>
-  <div class="relative h-full w-full">
+  <div
+    class="relative h-full w-full transition-opacity
+      duration-300"
+    :class="
+      store.isLoading && 'pointer-events-none opacity-10'
+    "
+  >
     <UInput
       v-model="store.funnelName"
       size="lg"
