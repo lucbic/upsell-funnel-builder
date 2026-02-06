@@ -13,10 +13,6 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
 
-  a11y: {
-    enabled: false
-  },
-
   app: {
     head: {
       htmlAttrs: {
