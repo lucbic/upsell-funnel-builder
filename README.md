@@ -1,75 +1,39 @@
-# Nuxt Minimal Starter
+# Upsell Funnel Builder
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A beautiful visual drag-and-drop editor for building sales funnels with upsells and downsells. Users compose funnels by placing page nodes (sales page, order page, upsell, downsell, thank-you) onto a canvas and connecting them to define the buyer journey.
 
-## Setup
+The app is fully navigable with the keyboard and accessible. It's also fully responsive and works well on mobile devices.
 
-Make sure to install dependencies:
+Developed by Lucas Bicudo 🇧🇷
+
+## Running Locally
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
 bun install
+bun run dev        # http://localhost:3000
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+Other useful commands:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+bun run generate   # static site build
+bun run preview    # preview the static build
+bun run test       # run tests (vitest)
+bun run typecheck  # TypeScript type checking
 ```
 
-## Production
+## Architecture Decisions
 
-Build the application for production:
+- **Nuxt 4 (SPA, SSR off)** — The app is a pure client-side (SPA) tool with no server data requirements. Static generation (`bun run generate`) lets it be hosted on any simple static server. I assumed SEO was not a requirement for this project, so handling server-side rendering and state was not a priority.
+- **TypeScript** Type safe codebase. Easy to understand and maintain. All types are declared globally with namespaces in order to not pollute the global namespace and avoid unnecessary imports, following Nuxt's autoimporting phylosophy.
+- **Nuxt UI + Tailwind 4** for the interface - Provides a consistent easy-to-use component library and utility-first styling without custom CSS overhead.
+- **SCSS custom styling** SCSS is used for custom styling throughout the app.Sometimes writing complex utility classes for edge cases is just too cumbersome, so SCSS for the win.
+- **Vue Flow** for the graph canvas - Mature, vue-native library for node-based editors. Handles zoom, pan, drag and edge routing out of the box.
+- **Pinia for state management** - All funnel state (nodes, edges, metadata) lives in a single `useFunnelStore`. Persistence is handled via `localStorage` with auto-save.
 
-```bash
-# npm
-npm run build
+## Tradeoffs & What I'd Improve Next
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- **No undo/redo** - The graph editor currently lacks history. Implementing a command pattern on top of the store would solve this. An immutability library like Immer would be a good fit, or maybe a pinia plugin (like pinia-undo) with dynamic stores for each funnel.
+- **No minimap** - The app currently lacks a minimap. I wasn't happy with how the vue-flow minimap style customisation worked, so I decided to not include it for now.
+- **No E2E tests** - Unit tests exist, but there are no end-to-end tests covering the full drag-drop-connect flow. The development already took me a good amount of time, so I decided to not include it for now.
+- **No full accessibility features** - It's possible to add nodes to the canvas, navigate through them, and even move them around with the keyboard, but it's not possible to add nodes connections. In a production-grade app, I would spent more time to make it fully accessible.
