@@ -159,20 +159,26 @@ export const useFunnelStore = defineStore('funnel', () => {
     }
   }
 
-  const loadFunnel = (id: string) => {
+  const loadFunnel = (
+    id: string,
+    { silent = false } = {}
+  ) => {
     const funnel = getSavedFunnelData(id)
 
     if (!funnel) {
-      toast.add({
-        title: 'Load Error',
-        description: 'Could not find the requested funnel',
-        color: 'error',
-        icon: 'i-lucide-alert-circle'
-      })
+      if (!silent) {
+        toast.add({
+          title: 'Load Error',
+          description:
+            'Could not find the requested funnel',
+          color: 'error',
+          icon: 'i-lucide-alert-circle'
+        })
+      }
       return
     }
 
-    isLoading.value = true
+    if (!silent) isLoading.value = true
     currentFunnelId.value = funnel.id
     funnelName.value = funnel.name
     nodeTypeCounts.value = { ...funnel.nodeTypeCounts }
@@ -180,7 +186,8 @@ export const useFunnelStore = defineStore('funnel', () => {
 
     nodes.value = funnel.nodes.map(node => ({
       ...node,
-      type: node.type
+      type: node.type,
+      ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.type]?.label ?? node.type}`
     }))
 
     edges.value = funnel.edges.map(edge => ({
@@ -196,11 +203,13 @@ export const useFunnelStore = defineStore('funnel', () => {
       }
     }))
 
-    toast.add({
-      title: 'Funnel Loaded',
-      description: `"${funnel.name}" has been loaded`,
-      icon: 'i-lucide-folder-open'
-    })
+    if (!silent) {
+      toast.add({
+        title: 'Funnel Loaded',
+        description: `"${funnel.name}" has been loaded`,
+        icon: 'i-lucide-folder-open'
+      })
+    }
   }
 
   const deleteFunnel = (id: string) => {
@@ -298,7 +307,8 @@ export const useFunnelStore = defineStore('funnel', () => {
 
       nodes.value = data.nodes.map(node => ({
         ...node,
-        type: node.type
+        type: node.type,
+        ariaLabel: `${node.data.title} - ${nodeTypeConfig[node.type]?.label ?? node.type}`
       }))
 
       edges.value = data.edges.map(edge => ({
@@ -355,6 +365,7 @@ export const useFunnelStore = defineStore('funnel', () => {
       id: `node-${nodeIdCounter.value}`,
       type,
       position,
+      ariaLabel: `${title} - ${config.label}`,
       data: {
         title,
         icon: config.icon,
@@ -433,6 +444,16 @@ export const useFunnelStore = defineStore('funnel', () => {
   // Initialize on client
   if (import.meta.client) {
     loadSavedFunnelsIndex()
+
+    if (savedFunnels.value.length > 0) {
+      const mostRecent = savedFunnels.value.reduce(
+        (latest, current) =>
+          current.updatedAt > latest.updatedAt
+            ? current
+            : latest
+      )
+      loadFunnel(mostRecent.id, { silent: true })
+    }
   }
 
   return {
