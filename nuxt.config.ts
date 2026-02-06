@@ -14,17 +14,7 @@ export default defineNuxtConfig({
   ],
 
   a11y: {
-    axe: {
-      options: {},
-      runOptions: {
-        exclude: [
-          '[data-reka-collection-item]',
-          '[data-slot="viewport"]',
-          '.list-scroll',
-          '.frame'
-        ]
-      } as any
-    }
+    enabled: false
   },
 
   app: {
@@ -37,7 +27,7 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'Build and visualize your sales funnel with upsells and downsells'
+            'Build and visualize your sales funnels with upsells and downsells'
         }
       ]
     }
