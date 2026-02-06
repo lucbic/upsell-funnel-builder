@@ -1,8 +1,3 @@
-export const useNodeSizes = () => ({
-  NODE_WIDTH: 200,
-  NODE_HEIGHT: 75
-})
-
 export const useNodeTypeConfig = (): Record<
   Funnel.NodeType,
   Funnel.NodeTypeConfig
@@ -25,8 +20,20 @@ export const useNodeTypeConfig = (): Record<
     maxOutgoingEdges: 2,
     maxIncomingEdges: 1,
     handles: [
-      { id: 'accepted', label: 'Purchased', icon: 'i-lucide-check', color: 'success', position: 'right' },
-      { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }
+      {
+        id: 'accepted',
+        label: 'Purchased',
+        icon: 'i-lucide-check',
+        color: 'success',
+        position: 'right'
+      },
+      {
+        id: 'declined',
+        label: 'Declined',
+        icon: 'i-lucide-x',
+        color: 'error',
+        position: 'bottom'
+      }
     ]
   },
   upsell: {
@@ -38,8 +45,20 @@ export const useNodeTypeConfig = (): Record<
     autoIncrement: true,
     maxOutgoingEdges: 2,
     handles: [
-      { id: 'accepted', label: 'Accepted', icon: 'i-lucide-check', color: 'success', position: 'right' },
-      { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }
+      {
+        id: 'accepted',
+        label: 'Accepted',
+        icon: 'i-lucide-check',
+        color: 'success',
+        position: 'right'
+      },
+      {
+        id: 'declined',
+        label: 'Declined',
+        icon: 'i-lucide-x',
+        color: 'error',
+        position: 'bottom'
+      }
     ]
   },
   downsell: {
@@ -51,8 +70,20 @@ export const useNodeTypeConfig = (): Record<
     autoIncrement: true,
     maxOutgoingEdges: 2,
     handles: [
-      { id: 'accepted', label: 'Accepted', icon: 'i-lucide-check', color: 'success', position: 'right' },
-      { id: 'declined', label: 'Declined', icon: 'i-lucide-x', color: 'error', position: 'bottom' }
+      {
+        id: 'accepted',
+        label: 'Accepted',
+        icon: 'i-lucide-check',
+        color: 'success',
+        position: 'right'
+      },
+      {
+        id: 'declined',
+        label: 'Declined',
+        icon: 'i-lucide-x',
+        color: 'error',
+        position: 'bottom'
+      }
     ]
   },
   'thank-you': {

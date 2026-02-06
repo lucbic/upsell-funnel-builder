@@ -1,13 +1,9 @@
 <script setup lang="ts">
-  import { useVueFlow } from '@vue-flow/core'
-
   const nodeTypes = Object.entries(useNodeTypeConfig()) as [
     Funnel.NodeType,
     Funnel.NodeTypeConfig
   ][]
 
-  const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
-  const { screenToFlowCoordinate } = useVueFlow()
   const store = useFunnelStore()
 
   const onDragStart = (
@@ -20,22 +16,6 @@
       nodeType
     )
     event.dataTransfer.effectAllowed = 'move'
-  }
-
-  const addNodeViaKeyboard = (type: Funnel.NodeType) => {
-    const vueFlowEl = document.querySelector('.vue-flow')
-    if (!vueFlowEl) return
-
-    const rect = vueFlowEl.getBoundingClientRect()
-    const center = screenToFlowCoordinate({
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
-    })
-
-    store.createNode(type, {
-      x: center.x - NODE_WIDTH / 2,
-      y: center.y - NODE_HEIGHT / 2
-    })
   }
 
   const links = [
@@ -80,8 +60,10 @@
             focus-visible:ring-2 focus-visible:outline-none
             active:cursor-grabbing"
           @dragstart="onDragStart($event, type)"
-          @keydown.enter="addNodeViaKeyboard(type)"
-          @keydown.space.prevent="addNodeViaKeyboard(type)"
+          @keydown.enter="store.addNodeToCanvas(type)"
+          @keydown.space.prevent="
+            store.addNodeToCanvas(type)
+          "
         >
           <BuilderPanelNode
             palette

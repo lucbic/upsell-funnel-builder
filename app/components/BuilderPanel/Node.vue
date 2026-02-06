@@ -12,7 +12,7 @@
     data
   } = defineProps<Props>()
 
-  const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
+  const { NODE_WIDTH, NODE_HEIGHT } = useConstants()
   const nodeTypeConfig = useNodeTypeConfig()
 
   const config = computed(() =>

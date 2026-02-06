@@ -19,8 +19,6 @@
 
   import { Background as VFBackground } from '@vue-flow/background'
 
-  const { NODE_WIDTH, NODE_HEIGHT } = useNodeSizes()
-
   const fitViewParams: FitViewParams = {
     duration: 300,
     padding: '100px'
@@ -37,6 +35,7 @@
     fitView
   } = useVueFlow()
 
+  const { NODE_WIDTH, NODE_HEIGHT } = useConstants()
   const store = useFunnelStore()
   const toast = useToast()
 

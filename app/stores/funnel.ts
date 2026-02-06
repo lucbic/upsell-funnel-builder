@@ -341,6 +341,9 @@ export const useFunnelStore = defineStore('funnel', () => {
     }
   }
 
+  const { NODE_WIDTH, KEYBOARD_INSERT_NODE_GAP } =
+    useConstants()
+
   const createNode = (
     type: Funnel.NodeType,
     position: { x: number; y: number }
@@ -376,6 +379,22 @@ export const useFunnelStore = defineStore('funnel', () => {
     }
 
     nodes.value.push(newNode)
+  }
+
+  const addNodeToCanvas = (type: Funnel.NodeType) => {
+    const lastNode = nodes.value.at(-1)
+
+    const position = lastNode
+      ? {
+          x:
+            lastNode.position.x +
+            NODE_WIDTH +
+            KEYBOARD_INSERT_NODE_GAP,
+          y: lastNode.position.y
+        }
+      : { x: 0, y: 0 }
+
+    createNode(type, position)
   }
 
   const connectionValidator = getConnectionValidator()
@@ -466,6 +485,7 @@ export const useFunnelStore = defineStore('funnel', () => {
     isLoading,
     hasContent,
     createNode,
+    addNodeToCanvas,
     validateConnection,
     addEdge,
     deleteNode,
