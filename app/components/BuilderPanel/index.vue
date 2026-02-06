@@ -32,7 +32,6 @@
 
   const store = useFunnelStore()
   const toast = useToast()
-  const colorMode = useColorMode()
 
   onConnect((connection: VFConnection) => {
     const validation = store.validateConnection(connection)
@@ -121,6 +120,8 @@
       store.isLoading = false
     }
   )
+
+  const colorMode = useColorMode()
 </script>
 
 <template>
@@ -190,7 +191,7 @@
       </template>
 
       <VFBackground
-        pattern-color="var(--ui-color-neutral-800)"
+        pattern-color="var(--ui-border)"
         :gap="25"
         variant="lines"
         class="pointer-events-none"
