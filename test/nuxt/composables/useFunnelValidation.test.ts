@@ -5,6 +5,7 @@ import {
   beforeEach,
   vi
 } from 'vitest'
+import { ref } from 'vue'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 
 const mockToastAdd = vi.fn()
@@ -30,6 +31,11 @@ describe('useFunnelValidation', () => {
       setItem: vi.fn(),
       removeItem: vi.fn()
     })
+    vi.stubGlobal(
+      'useStorage',
+      <T>(_key: string, defaultValue: T) =>
+        ref(defaultValue)
+    )
 
     const { useFunnelStore } =
       await import('~/stores/funnel')

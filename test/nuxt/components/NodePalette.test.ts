@@ -131,7 +131,7 @@ describe('NodePalette', () => {
         '[draggable="true"]'
       )
 
-      await firstDraggable.element.focus()
+      await (firstDraggable.element as HTMLElement).focus()
       await firstDraggable.trigger('keydown.enter')
 
       expect(mockCreateNode).toHaveBeenCalled()

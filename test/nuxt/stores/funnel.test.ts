@@ -5,6 +5,7 @@ import {
   beforeEach,
   vi
 } from 'vitest'
+import { ref } from 'vue'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 
 const mockToastAdd = vi.fn()
@@ -33,6 +34,11 @@ describe('useFunnelStore', () => {
         delete storage[key]
       })
     })
+    vi.stubGlobal(
+      'useStorage',
+      <T>(_key: string, defaultValue: T) =>
+        ref(defaultValue)
+    )
 
     mockToastAdd.mockClear()
 
