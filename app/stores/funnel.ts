@@ -383,7 +383,7 @@ export const useFunnelStore = defineStore('funnel', () => {
 
   const addEdge = (connection: Connection) => {
     const newEdge: Edge = {
-      id: `e-${connection.source}-${connection.target}`,
+      id: `e-${connection.source}${connection.sourceHandle ? `-${connection.sourceHandle}` : ''}-${connection.target}`,
       source: connection.source,
       target: connection.target,
       sourceHandle: connection.sourceHandle,

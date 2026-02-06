@@ -122,11 +122,30 @@ export const noDuplicateConnection: Validator = context => {
   const duplicate = context.edges.find(
     e =>
       e.source === context.connection.source &&
-      e.target === context.connection.target
+      e.target === context.connection.target &&
+      e.sourceHandle === context.connection.sourceHandle
   )
   if (duplicate)
     return invalidConnection(
       'This connection already exists'
+    )
+
+  return { valid: true }
+}
+
+export const handleMaxOneEdge: Validator = context => {
+  const { sourceHandle } = context.connection
+  if (!sourceHandle) return { valid: true }
+
+  const existing = context.edges.find(
+    e =>
+      e.source === context.connection.source &&
+      e.sourceHandle === sourceHandle
+  )
+
+  if (existing)
+    return invalidConnection(
+      'This handle already has a connection'
     )
 
   return { valid: true }
@@ -140,5 +159,6 @@ export const getConnectionValidator = () =>
     thankYouNoOutgoing,
     salesPageTarget,
     salesPageMaxConnections,
-    noDuplicateConnection
+    noDuplicateConnection,
+    handleMaxOneEdge
   )
