@@ -3,10 +3,9 @@
   import { useVueFlow } from '@vue-flow/core'
   import { Controls as VFControls } from '@vue-flow/controls'
 
-  const FIT_VIEW_PARAMS: FitViewParams = {
-    duration: 300,
-    padding: '100px'
-  }
+  defineProps<{
+    fitViewParams: FitViewParams
+  }>()
 
   const { zoomIn, zoomOut, fitView } = useVueFlow()
 </script>
@@ -15,7 +14,7 @@
   <VFControls
     position="top-right"
     :show-interactive="false"
-    :fit-view-params="FIT_VIEW_PARAMS"
+    :fit-view-params="fitViewParams"
     class="border-muted overflow-hidden rounded-full
       border-2"
   >
@@ -25,7 +24,7 @@
         class="vue-flow__controls-button
           vue-flow__controls-zoomin"
         aria-label="Zoom in"
-        @click="zoomIn()"
+        @click="zoomIn({ duration: 100 })"
       >
         <UIcon
           name="i-lucide-zoom-in"
@@ -40,7 +39,7 @@
         class="vue-flow__controls-button
           vue-flow__controls-zoomout"
         aria-label="Zoom out"
-        @click="zoomOut()"
+        @click="zoomOut({ duration: 100 })"
       >
         <UIcon
           name="i-lucide-zoom-out"
@@ -55,7 +54,7 @@
         class="vue-flow__controls-button
           vue-flow__controls-fitview"
         aria-label="Fit view"
-        @click="fitView(FIT_VIEW_PARAMS)"
+        @click="fitView(fitViewParams)"
       >
         <UIcon
           name="i-lucide-minimize"
