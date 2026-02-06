@@ -13,6 +13,20 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
 
+  a11y: {
+    axe: {
+      options: {},
+      runOptions: {
+        exclude: [
+          '[data-reka-collection-item]',
+          '[data-slot="viewport"]',
+          '.list-scroll',
+          '.frame'
+        ]
+      } as any
+    }
+  },
+
   app: {
     head: {
       htmlAttrs: {
@@ -20,7 +34,11 @@ export default defineNuxtConfig({
       },
       title: 'Upsell Funnel Builder',
       meta: [
-        { name: 'description', content: 'Build and visualize your sales funnel with upsells and downsells' }
+        {
+          name: 'description',
+          content:
+            'Build and visualize your sales funnel with upsells and downsells'
+        }
       ]
     }
   },
