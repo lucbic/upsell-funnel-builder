@@ -15,14 +15,19 @@ import {
   deserializeEdges
 } from '~/utils/funnelSerialization'
 
-const STORAGE_KEY_PREFIX = 'funnel_'
-const STORAGE_INDEX_KEY = 'funnel_index'
-const AUTO_SAVE_DEBOUNCE_MS = 1000
-
 export const useFunnelStore = defineStore('funnel', () => {
   const toast = useToast()
-  const { handleError } = useErrorHandler()
   const nodeTypeConfig = getNodeTypeConfig()
+  const {
+    NODE_WIDTH,
+    KEYBOARD_INSERT_NODE_GAP,
+    EDGE_DEFAULTS,
+    STORAGE_KEY_PREFIX,
+    STORAGE_INDEX_KEY,
+    AUTO_SAVE_DEBOUNCE_MS
+  } = getConstants()
+
+  const { handleError } = useErrorHandler()
 
   // STATE
   const nodes = ref<VFNode<Funnel.NodeData>[]>([])
@@ -193,7 +198,10 @@ export const useFunnelStore = defineStore('funnel', () => {
     nodeTypeCounts.value = { ...funnel.nodeTypeCounts }
     nodeIdCounter.value = funnel.nodeIdCounter
 
-    nodes.value = deserializeNodes(funnel.nodes, nodeTypeConfig)
+    nodes.value = deserializeNodes(
+      funnel.nodes,
+      nodeTypeConfig
+    )
     edges.value = deserializeEdges(funnel.edges)
 
     if (!silent) {
@@ -296,7 +304,10 @@ export const useFunnelStore = defineStore('funnel', () => {
       }
       nodeIdCounter.value = data.nodeIdCounter || 0
 
-      nodes.value = deserializeNodes(data.nodes, nodeTypeConfig)
+      nodes.value = deserializeNodes(
+        data.nodes,
+        nodeTypeConfig
+      )
       edges.value = deserializeEdges(data.edges)
 
       saveFunnel()
@@ -314,9 +325,6 @@ export const useFunnelStore = defineStore('funnel', () => {
       )
     }
   }
-
-  const { NODE_WIDTH, KEYBOARD_INSERT_NODE_GAP, EDGE_DEFAULTS } =
-    getConstants()
 
   const createNode = (
     type: Funnel.NodeType,
@@ -416,15 +424,16 @@ export const useFunnelStore = defineStore('funnel', () => {
   }
 
   // Auto-save watcher
-  const debouncedSave = useDebounceFn(() => {
-    if (hasContent.value) {
-      saveFunnel()
+  watchDebounced(
+    [nodes, edges, funnelName],
+    () => {
+      if (hasContent.value) saveFunnel()
+    },
+    {
+      deep: true,
+      debounce: AUTO_SAVE_DEBOUNCE_MS
     }
-  }, AUTO_SAVE_DEBOUNCE_MS)
-
-  watch([nodes, edges, funnelName], () => debouncedSave(), {
-    deep: true
-  })
+  )
 
   // Load saved funnels
   if (import.meta.client && savedFunnels.value.length > 0) {

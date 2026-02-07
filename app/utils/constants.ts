@@ -21,5 +21,8 @@ export const getConstants = () =>
         width: 20,
         height: 20
       }
-    }
+    },
+    STORAGE_KEY_PREFIX: 'funnel_',
+    STORAGE_INDEX_KEY: 'funnel_index',
+    AUTO_SAVE_DEBOUNCE_MS: 200
   }) as const
