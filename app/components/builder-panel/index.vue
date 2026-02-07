@@ -65,7 +65,7 @@
 
   watch(
     () => mobileDrag.pendingDrop.value,
-    (drop) => {
+    drop => {
       if (!drop) return
       const consumed = mobileDrag.consumeDrop()
       if (!consumed) return
@@ -178,7 +178,12 @@
     addSelectedNodes([node])
   }
 
-  const colorMode = useColorMode()
+  const funnelNameInputRef = useTemplateRef<ComponentPublicInstance>('funnelNameInput')
+
+  const blurFunnelNameInput = () => {
+    const input = funnelNameInputRef.value?.$el?.querySelector('input')
+    input?.blur()
+  }
 </script>
 
 <template>
@@ -196,6 +201,7 @@
   >
     <UInput
       v-model="store.funnelName"
+      ref="funnelNameInput"
       aria-label="Funnel name"
       size="lg"
       trailing-icon="i-lucide-pencil"
@@ -204,6 +210,12 @@
       class="absolute top-[15px] left-1/2 z-50
         w-[calc(100%-8rem)] max-w-96 -translate-x-1/2
         shadow-lg"
+      @keydown.esc="blurFunnelNameInput"
+      @keydown.enter="blurFunnelNameInput"
+      @focus="
+        store.funnelName === 'Untitled Funnel' &&
+        (store.funnelName = '')
+      "
     />
 
     <VueFlow
