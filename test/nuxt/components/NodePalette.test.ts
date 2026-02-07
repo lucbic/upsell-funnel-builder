@@ -3,7 +3,7 @@ import {
   mountSuspended,
   mockNuxtImport
 } from '@nuxt/test-utils/runtime'
-import NodePalette from '~/components/NodePalette.vue'
+import NodePalette from '~/components/node-palette/index.vue'
 
 const mockCreateNode = vi.fn()
 const mockScreenToFlowCoordinate = vi.fn(() => ({
