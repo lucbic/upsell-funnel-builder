@@ -19,7 +19,7 @@ mockNuxtImport(
 
 describe('useFunnelValidation', () => {
   let store: ReturnType<
-    (typeof import('~/stores/funnel'))['useFunnelStore']
+    (typeof import('~/stores/funnelCanvas'))['useFunnelCanvasStore']
   >
   let validation: ReturnType<
     (typeof import('~/composables/useFunnelValidation'))['useFunnelValidation']
@@ -37,12 +37,12 @@ describe('useFunnelValidation', () => {
         ref(defaultValue)
     )
 
-    const { useFunnelStore } =
-      await import('~/stores/funnel')
+    const { useFunnelCanvasStore: useFunnelCanvasStore } =
+      await import('~/stores/funnelCanvas')
     const { useFunnelValidation } =
       await import('~/composables/useFunnelValidation')
 
-    store = useFunnelStore()
+    store = useFunnelCanvasStore()
     store.resetToNewFunnel()
     validation = useFunnelValidation()
   })

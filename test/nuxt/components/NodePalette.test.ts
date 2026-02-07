@@ -54,7 +54,7 @@ mockNuxtImport(
   'useDebounceFn',
   () => (fn: () => void) => fn
 )
-mockNuxtImport('useFunnelStore', () => () => ({
+mockNuxtImport('useFunnelCanvasStore', () => () => ({
   createNode: mockCreateNode,
   addNodeToCanvas: (type: string) => {
     mockCreateNode(type, { x: 0, y: 0 })

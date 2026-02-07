@@ -27,14 +27,13 @@ const mockHandleError = vi.fn(
     if (options?.rethrow) throw error
   }
 )
-mockNuxtImport(
-  'useErrorHandler',
-  () => () => ({ handleError: mockHandleError })
-)
+mockNuxtImport('useErrorHandler', () => () => ({
+  handleError: mockHandleError
+}))
 
-describe('useFunnelStore', () => {
+describe('useFunnelCanvasStore', () => {
   let store: ReturnType<
-    (typeof import('~/stores/funnel'))['useFunnelStore']
+    (typeof import('~/stores/funnelCanvas'))['useFunnelCanvasStore']
   >
   let storage: Record<string, string>
 
@@ -58,9 +57,9 @@ describe('useFunnelStore', () => {
     mockToastAdd.mockClear()
     mockHandleError.mockClear()
 
-    const { useFunnelStore } =
-      await import('~/stores/funnel')
-    store = useFunnelStore()
+    const { useFunnelCanvasStore: useFunnelCanvasStore } =
+      await import('~/stores/funnelCanvas')
+    store = useFunnelCanvasStore()
     store.resetToNewFunnel()
   })
 
@@ -273,131 +272,6 @@ describe('useFunnelStore', () => {
     })
   })
 
-  describe('saveFunnel', () => {
-    it('writes to localStorage', () => {
-      store.createNode('sales-page', { x: 0, y: 0 })
-      store.saveFunnel()
-
-      expect(localStorage.setItem).toHaveBeenCalled()
-      expect(store.currentFunnelId).toBeTruthy()
-    })
-
-    it('updates savedFunnels index', () => {
-      store.saveFunnel()
-      expect(
-        store.savedFunnels.length
-      ).toBeGreaterThanOrEqual(1)
-    })
-
-    it('calls handleError on storage failure', () => {
-      vi.mocked(
-        localStorage.setItem
-      ).mockImplementationOnce(() => {
-        throw new Error('QuotaExceeded')
-      })
-      store.saveFunnel()
-      expect(mockHandleError).toHaveBeenCalledWith(
-        'Storage Error',
-        'Failed to save funnel. Storage may be full.',
-        expect.any(Error)
-      )
-    })
-  })
-
-  describe('loadFunnel', () => {
-    it('restores nodes and edges', () => {
-      store.createNode('sales-page', { x: 0, y: 0 })
-      store.saveFunnel()
-      const savedId = store.currentFunnelId!
-
-      store.resetToNewFunnel()
-      expect(store.nodes).toHaveLength(0)
-
-      store.loadFunnel(savedId)
-      expect(store.nodes).toHaveLength(1)
-      expect(store.currentFunnelId).toBe(savedId)
-    })
-
-    it('shows toast on success (non-silent)', () => {
-      store.createNode('sales-page', { x: 0, y: 0 })
-      store.saveFunnel()
-      const savedId = store.currentFunnelId!
-
-      mockToastAdd.mockClear()
-      store.loadFunnel(savedId)
-      expect(mockToastAdd).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Funnel Loaded' })
-      )
-    })
-
-    it('silent mode suppresses toast', () => {
-      store.createNode('sales-page', { x: 0, y: 0 })
-      store.saveFunnel()
-      const savedId = store.currentFunnelId!
-
-      mockToastAdd.mockClear()
-      store.loadFunnel(savedId, { silent: true })
-
-      const loadToasts = mockToastAdd.mock.calls.filter(
-        args =>
-          (args[0] as { title: string })?.title ===
-          'Funnel Loaded'
-      )
-      expect(loadToasts).toHaveLength(0)
-    })
-
-    it('calls handleError for missing funnel', () => {
-      store.loadFunnel('nonexistent')
-      expect(mockHandleError).toHaveBeenCalledWith(
-        'Load Error',
-        'Could not find the requested funnel',
-        undefined,
-        expect.objectContaining({ toast: true })
-      )
-    })
-
-    it('silent mode suppresses error toast', () => {
-      mockHandleError.mockClear()
-      store.loadFunnel('nonexistent', { silent: true })
-      expect(mockHandleError).toHaveBeenCalledWith(
-        'Load Error',
-        'Could not find the requested funnel',
-        undefined,
-        expect.objectContaining({ toast: false })
-      )
-    })
-  })
-
-  describe('deleteFunnel', () => {
-    it('removes from storage', () => {
-      store.saveFunnel()
-      const id = store.currentFunnelId!
-      store.deleteFunnel(id)
-      expect(localStorage.removeItem).toHaveBeenCalledWith(
-        `funnel_${id}`
-      )
-    })
-
-    it('updates savedFunnels index', () => {
-      store.saveFunnel()
-      const id = store.currentFunnelId!
-      const countBefore = store.savedFunnels.length
-      store.deleteFunnel(id)
-      expect(store.savedFunnels.length).toBe(
-        countBefore - 1
-      )
-    })
-
-    it('resets if deleting current funnel', () => {
-      store.createNode('sales-page', { x: 0, y: 0 })
-      store.saveFunnel()
-      const id = store.currentFunnelId!
-      store.deleteFunnel(id)
-      expect(store.currentFunnelId).toBeNull()
-      expect(store.nodes).toHaveLength(0)
-    })
-  })
-
   describe('resetToNewFunnel', () => {
     it('clears all state to defaults', () => {
       store.createNode('sales-page', { x: 0, y: 0 })
@@ -415,24 +289,213 @@ describe('useFunnelStore', () => {
     })
   })
 
+  describe('loadState', () => {
+    it('bulk-sets all canvas state', () => {
+      store.loadState({
+        id: 'test-id',
+        name: 'Test Funnel',
+        nodes: [],
+        edges: [],
+        nodeTypeCounts: { upsell: 3, downsell: 1 },
+        nodeIdCounter: 5
+      })
+
+      expect(store.currentFunnelId).toBe('test-id')
+      expect(store.funnelName).toBe('Test Funnel')
+      expect(store.nodeTypeCounts).toEqual({
+        upsell: 3,
+        downsell: 1
+      })
+      expect(store.nodeIdCounter).toBe(5)
+    })
+  })
+})
+
+describe('useFunnelPersistenceStore', () => {
+  let store: ReturnType<
+    (typeof import('~/stores/funnelCanvas'))['useFunnelCanvasStore']
+  >
+  let persistenceStore: ReturnType<
+    (typeof import('~/stores/funnelPersistence'))['useFunnelPersistenceStore']
+  >
+  let storage: Record<string, string>
+
+  beforeEach(async () => {
+    storage = {}
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn((key: string) => storage[key] ?? null),
+      setItem: vi.fn((key: string, value: string) => {
+        storage[key] = value
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete storage[key]
+      })
+    })
+    vi.stubGlobal(
+      'useStorage',
+      <T>(_key: string, defaultValue: T) =>
+        ref(defaultValue)
+    )
+
+    mockToastAdd.mockClear()
+    mockHandleError.mockClear()
+
+    const { useFunnelCanvasStore: useFunnelCanvasStore } =
+      await import('~/stores/funnelCanvas')
+    const { useFunnelPersistenceStore } =
+      await import('~/stores/funnelPersistence')
+
+    store = useFunnelCanvasStore()
+    store.resetToNewFunnel()
+    persistenceStore = useFunnelPersistenceStore()
+  })
+
+  describe('saveFunnel', () => {
+    it('writes to localStorage', () => {
+      store.createNode('sales-page', { x: 0, y: 0 })
+      persistenceStore.saveFunnel()
+
+      expect(localStorage.setItem).toHaveBeenCalled()
+      expect(store.currentFunnelId).toBeTruthy()
+    })
+
+    it('updates savedFunnels index', () => {
+      persistenceStore.saveFunnel()
+      expect(
+        persistenceStore.savedFunnels.length
+      ).toBeGreaterThanOrEqual(1)
+    })
+
+    it('calls handleError on storage failure', () => {
+      vi.mocked(
+        localStorage.setItem
+      ).mockImplementationOnce(() => {
+        throw new Error('QuotaExceeded')
+      })
+      persistenceStore.saveFunnel()
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Storage Error',
+        'Failed to save funnel. Storage may be full.',
+        expect.any(Error)
+      )
+    })
+  })
+
+  describe('loadFunnel', () => {
+    it('restores nodes and edges', () => {
+      store.createNode('sales-page', { x: 0, y: 0 })
+      persistenceStore.saveFunnel()
+      const savedId = store.currentFunnelId!
+
+      store.resetToNewFunnel()
+      expect(store.nodes).toHaveLength(0)
+
+      persistenceStore.loadFunnel(savedId)
+      expect(store.nodes).toHaveLength(1)
+      expect(store.currentFunnelId).toBe(savedId)
+    })
+
+    it('shows toast on success (non-silent)', () => {
+      store.createNode('sales-page', { x: 0, y: 0 })
+      persistenceStore.saveFunnel()
+      const savedId = store.currentFunnelId!
+
+      mockToastAdd.mockClear()
+      persistenceStore.loadFunnel(savedId)
+      expect(mockToastAdd).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'Funnel Loaded' })
+      )
+    })
+
+    it('silent mode suppresses toast', () => {
+      store.createNode('sales-page', { x: 0, y: 0 })
+      persistenceStore.saveFunnel()
+      const savedId = store.currentFunnelId!
+
+      mockToastAdd.mockClear()
+      persistenceStore.loadFunnel(savedId, { silent: true })
+
+      const loadToasts = mockToastAdd.mock.calls.filter(
+        args =>
+          (args[0] as { title: string })?.title ===
+          'Funnel Loaded'
+      )
+      expect(loadToasts).toHaveLength(0)
+    })
+
+    it('calls handleError for missing funnel', () => {
+      persistenceStore.loadFunnel('nonexistent')
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Load Error',
+        'Could not find the requested funnel',
+        undefined,
+        expect.objectContaining({ toast: true })
+      )
+    })
+
+    it('silent mode suppresses error toast', () => {
+      mockHandleError.mockClear()
+      persistenceStore.loadFunnel('nonexistent', {
+        silent: true
+      })
+      expect(mockHandleError).toHaveBeenCalledWith(
+        'Load Error',
+        'Could not find the requested funnel',
+        undefined,
+        expect.objectContaining({ toast: false })
+      )
+    })
+  })
+
+  describe('deleteFunnel', () => {
+    it('removes from storage', () => {
+      persistenceStore.saveFunnel()
+      const id = store.currentFunnelId!
+      persistenceStore.deleteFunnel(id)
+      expect(localStorage.removeItem).toHaveBeenCalledWith(
+        `funnel_${id}`
+      )
+    })
+
+    it('updates savedFunnels index', () => {
+      persistenceStore.saveFunnel()
+      const id = store.currentFunnelId!
+      const countBefore =
+        persistenceStore.savedFunnels.length
+      persistenceStore.deleteFunnel(id)
+      expect(persistenceStore.savedFunnels.length).toBe(
+        countBefore - 1
+      )
+    })
+
+    it('resets if deleting current funnel', () => {
+      store.createNode('sales-page', { x: 0, y: 0 })
+      persistenceStore.saveFunnel()
+      const id = store.currentFunnelId!
+      persistenceStore.deleteFunnel(id)
+      expect(store.currentFunnelId).toBeNull()
+      expect(store.nodes).toHaveLength(0)
+    })
+  })
+
   describe('createNewFunnel', () => {
     it('resets when skipConfirmation=true', () => {
       store.createNode('sales-page', { x: 0, y: 0 })
-      const result = store.createNewFunnel(true)
+      const result = persistenceStore.createNewFunnel(true)
       expect(result).toBe(true)
       expect(store.nodes).toHaveLength(0)
     })
 
     it('returns false when has content and no confirmation', () => {
       store.createNode('sales-page', { x: 0, y: 0 })
-      const result = store.createNewFunnel(false)
+      const result = persistenceStore.createNewFunnel(false)
       expect(result).toBe(false)
       expect(store.nodes).toHaveLength(1)
     })
 
     it('shows toast on success', () => {
       mockToastAdd.mockClear()
-      store.createNewFunnel(true)
+      persistenceStore.createNewFunnel(true)
       expect(mockToastAdd).toHaveBeenCalledWith(
         expect.objectContaining({
           title: 'New Funnel Created'
@@ -458,7 +521,7 @@ describe('useFunnelStore', () => {
       )
 
       store.funnelName = 'My Test Funnel'
-      store.exportFunnel()
+      persistenceStore.exportFunnel()
 
       expect(URL.createObjectURL).toHaveBeenCalled()
       expect(mockLink.click).toHaveBeenCalled()
@@ -482,7 +545,7 @@ describe('useFunnelStore', () => {
       )
 
       store.funnelName = 'My Funnel! @#$'
-      store.exportFunnel()
+      persistenceStore.exportFunnel()
 
       // "My Funnel! @#$" → each non-alphanumeric replaced with _
       // regex /[^a-z0-9]/gi matches: space, !, space, @, #, $
@@ -520,7 +583,7 @@ describe('useFunnelStore', () => {
         nodeIdCounter: 1
       })
 
-      await store.importFunnel(file)
+      await persistenceStore.importFunnel(file)
       expect(store.funnelName).toBe('Imported Funnel')
       expect(store.nodes).toHaveLength(1)
     })
@@ -535,7 +598,7 @@ describe('useFunnelStore', () => {
         nodeIdCounter: 0
       })
 
-      await store.importFunnel(file)
+      await persistenceStore.importFunnel(file)
       expect(store.currentFunnelId).not.toBe('old-id')
       expect(store.currentFunnelId).toContain('funnel_')
     })
@@ -543,7 +606,7 @@ describe('useFunnelStore', () => {
     it('rejects invalid format', async () => {
       const file = createMockFile({ invalid: true })
 
-      await store.importFunnel(file)
+      await persistenceStore.importFunnel(file)
       expect(mockHandleError).toHaveBeenCalledWith(
         'Import Error',
         'Invalid funnel file format',
