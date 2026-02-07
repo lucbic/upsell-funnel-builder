@@ -45,7 +45,7 @@ export default defineNuxtConfig({
     strict: true,
     typeCheck: true,
     tsConfig: {
-      include: ['../test/unit/**/*', '../test/helpers/**/*']
+      include: ['../test/unit/**/*', '../test/helpers/**/*', '../test/e2e/**/*']
     }
   },
 
