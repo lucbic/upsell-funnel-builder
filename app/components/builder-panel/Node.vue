@@ -64,8 +64,8 @@
     :style="nodeStyle"
     :class="{ 'node-selected': selected }"
     class="border-muted bg-elevated
-      focus-visible:ring-primary flex cursor-move flex-col
-      rounded-lg border shadow-lg transition-shadow
+      focus-visible:ring-primary relative flex cursor-move
+      flex-col rounded-lg border shadow-lg transition-shadow
       hover:shadow-xl focus-visible:ring-2
       focus-visible:outline-none"
   >
@@ -143,8 +143,6 @@
 
 <style scoped lang="scss">
   .node-selected {
-    position: relative;
-
     &::before {
       content: '';
       position: absolute;
