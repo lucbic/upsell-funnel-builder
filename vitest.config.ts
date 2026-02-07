@@ -8,14 +8,16 @@ export default defineConfig({
       {
         resolve: {
           alias: {
-            '~': fileURLToPath(new URL('./app', import.meta.url)),
-          },
+            '~': fileURLToPath(
+              new URL('./app', import.meta.url)
+            )
+          }
         },
         test: {
           name: 'unit',
           include: ['test/unit/**/*.{test,spec}.ts'],
-          environment: 'node',
-        },
+          environment: 'node'
+        }
       },
       {
         test: {
@@ -25,7 +27,9 @@ export default defineConfig({
           testTimeout: 30_000,
           hookTimeout: 30_000,
           globalSetup: ['test/e2e/globalSetup.ts'],
-        },
+          pool: 'forks',
+          fileParallelism: false
+        }
       },
       await defineVitestProject({
         test: {
@@ -34,12 +38,14 @@ export default defineConfig({
           environment: 'nuxt',
           environmentOptions: {
             nuxt: {
-              rootDir: fileURLToPath(new URL('.', import.meta.url)),
-              domEnvironment: 'happy-dom',
-            },
-          },
-        },
-      }),
-    ],
-  },
+              rootDir: fileURLToPath(
+                new URL('.', import.meta.url)
+              ),
+              domEnvironment: 'happy-dom'
+            }
+          }
+        }
+      })
+    ]
+  }
 })

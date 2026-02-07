@@ -4,7 +4,10 @@ let browser: Browser | null = null
 
 export const launchBrowser = async () => {
   if (!browser) {
-    browser = await chromium.launch({ headless: true })
+    browser = await chromium.launch({
+      headless: !process.env.HEADED,
+      slowMo: process.env.HEADED ? 300 : 0,
+    })
   }
   return browser
 }

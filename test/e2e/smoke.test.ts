@@ -1,6 +1,7 @@
 import type { Page } from 'playwright-core'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { closeBrowser, createPage, launchBrowser } from './setup'
+import { dismissCheckerOverlay } from './helpers'
 
 describe('Funnel Builder E2E Smoke Tests', () => {
   let page: Page
@@ -52,6 +53,8 @@ describe('Funnel Builder E2E Smoke Tests', () => {
     await addUpsell.press('Enter')
 
     await page.waitForSelector('.vue-flow__node', { timeout: 5_000 })
+
+    await dismissCheckerOverlay(page)
 
     const toggleButton = page.locator('[aria-expanded]')
     const isExpanded = await toggleButton.getAttribute('aria-expanded')
