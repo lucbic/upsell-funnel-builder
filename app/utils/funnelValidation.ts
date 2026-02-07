@@ -45,19 +45,23 @@ const getReachableNodeIds = (
   entryNodeIds: string[],
   edges: VFEdge[]
 ): Set<string> => {
+  const adjacency = new Map<string, string[]>()
+  for (const e of edges) {
+    const targets = adjacency.get(e.source) ?? []
+    targets.push(e.target)
+    adjacency.set(e.source, targets)
+  }
+
   const reachable = new Set<string>(entryNodeIds)
   const queue = [...entryNodeIds]
 
   while (queue.length > 0) {
     const currentId = queue.shift()!
-    const outgoingEdges = edges.filter(
-      e => e.source === currentId
-    )
 
-    for (const edge of outgoingEdges) {
-      if (!reachable.has(edge.target)) {
-        reachable.add(edge.target)
-        queue.push(edge.target)
+    for (const targetId of adjacency.get(currentId) ?? []) {
+      if (!reachable.has(targetId)) {
+        reachable.add(targetId)
+        queue.push(targetId)
       }
     }
   }
@@ -125,14 +129,12 @@ export const validateOrphanNodes: FunnelValidator = ({
   edges
 }) => {
   const issues: FunnelValidationIssue[] = []
+  const sourceIds = new Set(edges.map(e => e.source))
+  const targetIds = new Set(edges.map(e => e.target))
 
   for (const node of nodes) {
-    const hasIncoming = edges.some(
-      e => e.target === node.id
-    )
-    const hasOutgoing = edges.some(
-      e => e.source === node.id
-    )
+    const hasIncoming = targetIds.has(node.id)
+    const hasOutgoing = sourceIds.has(node.id)
 
     if (!hasIncoming && !hasOutgoing) {
       issues.push({
@@ -155,16 +157,15 @@ export const validateDeadEndNodes: FunnelValidator = ({
   const issues: FunnelValidationIssue[] = []
   const terminalTypes: Funnel.NodeType[] = ['thank-you']
 
+  const sourceIds = new Set(edges.map(e => e.source))
+  const targetIds = new Set(edges.map(e => e.target))
+
   for (const node of nodes) {
     if (terminalTypes.includes(node.data?.nodeType!))
       continue
 
-    const hasOutgoing = edges.some(
-      e => e.source === node.id
-    )
-    const hasIncoming = edges.some(
-      e => e.target === node.id
-    )
+    const hasOutgoing = sourceIds.has(node.id)
+    const hasIncoming = targetIds.has(node.id)
 
     if (!hasOutgoing && hasIncoming) {
       issues.push({
@@ -242,14 +243,19 @@ export const validateIncompleteOfferPaths: FunnelValidator =
     const issues: FunnelValidationIssue[] = []
     const nodeTypeConfig = getNodeTypeConfig()
 
+    const edgesBySource = new Map<string, VFEdge[]>()
+    for (const e of edges) {
+      const group = edgesBySource.get(e.source) ?? []
+      group.push(e)
+      edgesBySource.set(e.source, group)
+    }
+
     for (const node of nodes) {
       const config =
         nodeTypeConfig[node.type as Funnel.NodeType]
       if (!config?.handles) continue
 
-      const nodeEdges = edges.filter(
-        e => e.source === node.id
-      )
+      const nodeEdges = edgesBySource.get(node.id) ?? []
 
       const connectedHandles = new Set(
         nodeEdges.map(e => e.sourceHandle)
