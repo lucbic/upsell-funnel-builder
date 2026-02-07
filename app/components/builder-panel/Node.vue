@@ -63,9 +63,11 @@
     :aria-label="nodeAriaLabel"
     :style="nodeStyle"
     :class="{ 'node-selected': selected }"
-    class="border-muted bg-elevated flex cursor-move flex-col
+    class="border-muted bg-elevated
+      focus-visible:ring-primary flex cursor-move flex-col
       rounded-lg border shadow-lg transition-shadow
-      hover:shadow-xl"
+      hover:shadow-xl focus-visible:ring-2
+      focus-visible:outline-none"
   >
     <Handle
       v-if="!palette && data?.nodeType !== 'sales-page'"
@@ -150,13 +152,7 @@
       background: var(--color-selection-overlay);
       border-radius: inherit;
       pointer-events: none;
-      z-index: 1;
     }
-  }
-
-  :deep(.vue-flow__handle) {
-    will-change: auto !important;
-    transform: translateZ(0) !important;
   }
 
   :deep(.custom-handle) {
@@ -167,8 +163,6 @@
     align-items: center !important;
     justify-content: center !important;
     border: none !important;
-    will-change: auto !important;
-    transform: translateZ(0) !important;
   }
 
   :deep(.custom-handle--success) {
