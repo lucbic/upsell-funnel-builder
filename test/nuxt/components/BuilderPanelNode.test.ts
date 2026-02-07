@@ -1,32 +1,35 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { defineComponent, h } from 'vue'
 import BuilderPanelNode from '~/components/builder-panel/Node.vue'
 
-vi.mock('@vue-flow/core', () => {
-  const HandleStub = defineComponent({
-    name: 'Handle',
-    props: ['type', 'position', 'id'],
-    setup(props, { attrs, slots }) {
-      return () =>
-        h(
-          'div',
-          {
-            class: 'handle-stub',
-            'data-handle-type': props.type,
-            'data-handle-id': props.id,
-            'aria-label': attrs['aria-label']
-          },
-          slots.default?.()
-        )
-    }
-  })
+const { HandleStub } = vi.hoisted(() => {
+  const { defineComponent, h } = require('vue')
   return {
-    Handle: HandleStub,
-    Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' },
-    MarkerType: { ArrowClosed: 'arrowclosed' }
+    HandleStub: defineComponent({
+      name: 'Handle',
+      props: ['type', 'position', 'id'],
+      setup(props: Record<string, string>, { attrs, slots }: { attrs: Record<string, string>; slots: Record<string, () => unknown> }) {
+        return () =>
+          h(
+            'div',
+            {
+              class: 'handle-stub',
+              'data-handle-type': props.type,
+              'data-handle-id': props.id,
+              'aria-label': attrs['aria-label']
+            },
+            slots.default?.()
+          )
+      }
+    })
   }
 })
+
+vi.mock('@vue-flow/core', () => ({
+  Handle: HandleStub,
+  Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' },
+  MarkerType: { ArrowClosed: 'arrowclosed' }
+}))
 
 const salesData: Funnel.NodeData = {
   title: 'Sales Page',
