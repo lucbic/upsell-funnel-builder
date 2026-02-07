@@ -1,4 +1,9 @@
-export const useNodeTypeConfig = (): Record<
+/**
+ * Single source of truth for per-node-type configuration.
+ * Drives connection validation (`maxIncomingEdges`, `maxOutgoingEdges`),
+ * handle rendering, palette display, and auto-increment naming.
+ */
+export const getNodeTypeConfig = (): Record<
   Funnel.NodeType,
   Funnel.NodeTypeConfig
 > => ({

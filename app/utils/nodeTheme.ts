@@ -36,7 +36,7 @@ const DEFAULT_NODE_THEME: NodeTheme = {
   icon: 'text-gray-400'
 }
 
-export const useNodeTheme = (nodeType?: Funnel.NodeType) =>
+export const getNodeTheme = (nodeType?: Funnel.NodeType) =>
   nodeType
     ? (NODE_THEME_CONFIG[nodeType] ?? DEFAULT_NODE_THEME)
     : DEFAULT_NODE_THEME

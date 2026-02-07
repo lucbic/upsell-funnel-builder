@@ -1,6 +1,6 @@
 import { MarkerType } from '@vue-flow/core'
 
-export const useConstants = () =>
+export const getConstants = () =>
   ({
     GRID_SPACING: 25,
     NODE_WIDTH: 200,
