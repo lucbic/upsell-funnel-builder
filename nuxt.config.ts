@@ -42,7 +42,11 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   typescript: {
-    typeCheck: true
+    strict: true,
+    typeCheck: true,
+    tsConfig: {
+      include: ['../test/unit/**/*', '../test/helpers/**/*']
+    }
   },
 
   fonts: {
