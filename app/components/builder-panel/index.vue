@@ -141,6 +141,8 @@
   watch(
     () => store.currentFunnelId,
     () => {
+      if (!store.isLoading) return
+
       // NextTick didn't do the trick here, so we're using a timeout to schedule a macrotask in the event loop ¯\_(ツ)_/¯
       useTimeoutFn(() => {
         fitView(fitViewParams)
