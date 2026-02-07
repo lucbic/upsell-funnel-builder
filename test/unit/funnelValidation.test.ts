@@ -38,8 +38,8 @@ describe('validateEmptyFunnel', () => {
   it('returns error when empty', () => {
     const issues = validateEmptyFunnel(ctx())
     expect(issues).toHaveLength(1)
-    expect(issues[0].severity).toBe('error')
-    expect(issues[0].id).toBe('empty-funnel')
+    expect(issues[0]!.severity).toBe('error')
+    expect(issues[0]!.id).toBe('empty-funnel')
   })
 
   it('passes when nodes exist', () => {
@@ -56,8 +56,8 @@ describe('validateMissingEntryPoint', () => {
       ctx({ nodes: [createOrderPageNode()] })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].severity).toBe('error')
-    expect(issues[0].message).toContain('Sales Page')
+    expect(issues[0]!.severity).toBe('error')
+    expect(issues[0]!.message).toContain('Sales Page')
   })
 
   it('passes when sales-page exists', () => {
@@ -79,8 +79,8 @@ describe('validateMissingTerminal', () => {
       ctx({ nodes: [createSalesPageNode()] })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].severity).toBe('error')
-    expect(issues[0].message).toContain('Thank You')
+    expect(issues[0]!.severity).toBe('error')
+    expect(issues[0]!.message).toContain('Thank You')
   })
 
   it('passes when thank-you exists', () => {
@@ -103,8 +103,8 @@ describe('validateOrphanNodes', () => {
       ctx({ nodes: [orphan], edges: [] })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].id).toBe('orphan-orphan')
-    expect(issues[0].nodeId).toBe('orphan')
+    expect(issues[0]!.id).toBe('orphan-orphan')
+    expect(issues[0]!.nodeId).toBe('orphan')
   })
 
   it('passes for node with incoming only', () => {
@@ -167,7 +167,7 @@ describe('validateDeadEndNodes', () => {
       })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].id).toBe('dead-end-op')
+    expect(issues[0]!.id).toBe('dead-end-op')
   })
 
   it('passes for thank-you (terminal type)', () => {
@@ -217,8 +217,8 @@ describe('validateUnreachableNodes', () => {
       })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].id).toBe('unreachable-unr')
-    expect(issues[0].severity).toBe('warning')
+    expect(issues[0]!.id).toBe('unreachable-unr')
+    expect(issues[0]!.severity).toBe('warning')
   })
 
   it('passes when all reachable', () => {
@@ -291,8 +291,8 @@ describe('validateMultipleEntryPoints', () => {
       })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].severity).toBe('warning')
-    expect(issues[0].message).toContain('2')
+    expect(issues[0]!.severity).toBe('warning')
+    expect(issues[0]!.message).toContain('2')
   })
 
   it('passes for 1 sales page', () => {
@@ -321,7 +321,7 @@ describe('validateIncompleteOfferPaths', () => {
       })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].message).toContain('declined')
+    expect(issues[0]!.message).toContain('declined')
   })
 
   it('passes when all handles connected', () => {
@@ -365,7 +365,7 @@ describe('validateIncompleteOfferPaths', () => {
       })
     )
     expect(issues).toHaveLength(1)
-    expect(issues[0].id).toBe('incomplete-offer-us')
+    expect(issues[0]!.id).toBe('incomplete-offer-us')
   })
 })
 
