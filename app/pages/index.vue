@@ -1,6 +1,7 @@
 <script setup lang="ts">
   const toast = useToast()
   const store = useFunnelCanvasStore()
+  useFunnelPersistenceStore()
   const { start, finish } = useLoadingIndicator()
   const { isDesktop } = useDevice()
 
