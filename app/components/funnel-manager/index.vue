@@ -1,6 +1,7 @@
 <script setup lang="ts">
   const funnel = useFunnelStore()
-  const fileInput = ref<HTMLInputElement | null>(null)
+  const fileInput =
+    useTemplateRef<HTMLInputElement>('fileInput')
 
   const triggerImport = () => {
     fileInput.value?.click()

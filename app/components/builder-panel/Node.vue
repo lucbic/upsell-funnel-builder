@@ -35,11 +35,7 @@
     getNodeTheme(data?.nodeType)
   )
 
-  const handles = computed(() =>
-    data?.nodeType
-      ? nodeTypeConfig[data.nodeType]?.handles
-      : undefined
-  )
+  const handles = computed(() => config.value?.handles)
 
   const isBranching = computed(
     () => !!handles.value?.length
