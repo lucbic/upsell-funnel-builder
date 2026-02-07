@@ -5,6 +5,7 @@ import type {
 
 export type ValidationSeverity = 'error' | 'warning'
 
+/** A single validation problem found in the funnel graph. */
 export type FunnelValidationIssue = {
   id: string
   severity: ValidationSeverity
@@ -13,12 +14,17 @@ export type FunnelValidationIssue = {
   nodeName?: string
 }
 
+/**
+ * Aggregated validation result. `isValid` reflects errors only —
+ * a funnel with warnings but no errors is still considered valid.
+ */
 export type FunnelValidationResult = {
   isValid: boolean
   errors: FunnelValidationIssue[]
   warnings: FunnelValidationIssue[]
 }
 
+/** Read-only snapshot of the funnel graph passed to each validator. */
 export type FunnelValidationContext = {
   nodes: VFNode<Funnel.NodeData>[]
   edges: VFEdge[]
@@ -31,6 +37,10 @@ type FunnelValidator = (
 const getNodeName = (node: VFNode<Funnel.NodeData>) =>
   node.data?.title ?? node.id
 
+/**
+ * BFS traversal from entry nodes following outgoing edges.
+ * Returns all node IDs reachable from any entry point.
+ */
 const getReachableNodeIds = (
   entryNodeIds: string[],
   edges: VFEdge[]
@@ -222,10 +232,15 @@ export const validateMultipleEntryPoints: FunnelValidator =
     return []
   }
 
+/**
+ * Warns when a node has *some* but not all handles connected.
+ * If zero handles are connected, this stays silent — the dead-end
+ * validator handles that case instead.
+ */
 export const validateIncompleteOfferPaths: FunnelValidator =
   ({ nodes, edges }) => {
     const issues: FunnelValidationIssue[] = []
-    const nodeTypeConfig = useNodeTypeConfig()
+    const nodeTypeConfig = getNodeTypeConfig()
 
     for (const node of nodes) {
       const config =
@@ -275,6 +290,10 @@ const warningValidators: FunnelValidator[] = [
   validateIncompleteOfferPaths
 ]
 
+/**
+ * Runs all funnel validators and separates results into errors and warnings.
+ * `isValid` is true when there are zero errors — warnings alone don't block validity.
+ */
 export const validateFunnel = (
   context: FunnelValidationContext
 ): FunnelValidationResult => {

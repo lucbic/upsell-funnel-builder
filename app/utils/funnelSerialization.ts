@@ -13,7 +13,7 @@ export const deserializeNodes = (
 export const deserializeEdges = (
   serializedEdges: Funnel.SerializedEdge[]
 ): VFEdge[] => {
-  const { EDGE_DEFAULTS } = useConstants()
+  const { EDGE_DEFAULTS } = getConstants()
   return serializedEdges.map(edge => ({
     ...edge,
     ...EDGE_DEFAULTS

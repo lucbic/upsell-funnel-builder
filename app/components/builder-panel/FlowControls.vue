@@ -9,7 +9,7 @@
 
   const { zoomIn, zoomOut, fitView } = useVueFlow()
 
-  const { DURATION } = useConstants()
+  const { DURATION } = getConstants()
 </script>
 
 <template>

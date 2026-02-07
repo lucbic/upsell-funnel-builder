@@ -5,6 +5,12 @@ export type ValidationResult = {
   error?: string
 }
 
+/**
+ * Mutable context threaded through the validator pipeline.
+ * `sourceNode` and `targetNode` start undefined and are populated
+ * by the `sourceNodeExists` / `targetNodeExists` validators —
+ * later validators in the chain can safely read them.
+ */
 export type ValidationContext = {
   connection: Connection
   nodes: Node<Funnel.NodeData>[]
@@ -24,6 +30,11 @@ const invalidConnection = (
   error
 })
 
+/**
+ * Chains validators into a pipeline that short-circuits on first failure.
+ * Validators may mutate the shared context (e.g. populating `sourceNode`),
+ * so execution order matters.
+ */
 export const composeValidators = (
   ...validators: Validator[]
 ): Validator => {
@@ -142,8 +153,12 @@ export const noSourceToSource: Validator = context => {
   return { valid: true }
 }
 
+/**
+ * Config-driven incoming edge limit per node type.
+ * `maxIncomingEdges: undefined` = unlimited, `0` = no incoming allowed.
+ */
 export const maxIncomingEdges: Validator = context => {
-  const nodeTypeConfig = useNodeTypeConfig()
+  const nodeTypeConfig = getNodeTypeConfig()
   const targetType = context.targetNode?.type as Funnel.NodeType
   const config = nodeTypeConfig[targetType]
   const max = config?.maxIncomingEdges
@@ -164,6 +179,11 @@ export const maxIncomingEdges: Validator = context => {
   return { valid: true }
 }
 
+/**
+ * Limits each source *handle* to one outgoing edge. This is distinct from
+ * node-level edge limits — a node with two handles can still have two edges,
+ * but each handle can only drive one connection.
+ */
 export const handleMaxOneEdge: Validator = context => {
   const { sourceHandle } = context.connection
   if (!sourceHandle) return { valid: true }
@@ -182,6 +202,10 @@ export const handleMaxOneEdge: Validator = context => {
   return { valid: true }
 }
 
+/**
+ * Returns the composed connection validator. Order matters: `sourceNodeExists`
+ * and `targetNodeExists` run first to populate the context for downstream validators.
+ */
 export const getConnectionValidator = () =>
   composeValidators(
     sourceNodeExists,

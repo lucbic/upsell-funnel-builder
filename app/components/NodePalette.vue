@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const nodeTypes = useNodeTypeConfig()
+  const nodeTypes = getNodeTypeConfig()
 
   const store = useFunnelStore()
 

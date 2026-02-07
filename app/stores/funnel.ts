@@ -22,7 +22,7 @@ const AUTO_SAVE_DEBOUNCE_MS = 1000
 export const useFunnelStore = defineStore('funnel', () => {
   const toast = useToast()
   const { handleError } = useErrorHandler()
-  const nodeTypeConfig = useNodeTypeConfig()
+  const nodeTypeConfig = getNodeTypeConfig()
 
   // STATE
   const nodes = ref<VFNode<Funnel.NodeData>[]>([])
@@ -316,7 +316,7 @@ export const useFunnelStore = defineStore('funnel', () => {
   }
 
   const { NODE_WIDTH, KEYBOARD_INSERT_NODE_GAP, EDGE_DEFAULTS } =
-    useConstants()
+    getConstants()
 
   const createNode = (
     type: Funnel.NodeType,

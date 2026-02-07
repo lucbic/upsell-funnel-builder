@@ -12,8 +12,8 @@
     data
   } = defineProps<Props>()
 
-  const { NODE_WIDTH, NODE_HEIGHT } = useConstants()
-  const nodeTypeConfig = useNodeTypeConfig()
+  const { NODE_WIDTH, NODE_HEIGHT } = getConstants()
+  const nodeTypeConfig = getNodeTypeConfig()
 
   const config = computed(() =>
     data?.nodeType
@@ -32,7 +32,7 @@
   }))
 
   const themeColor = computed(() =>
-    useNodeTheme(data?.nodeType)
+    getNodeTheme(data?.nodeType)
   )
 
   const handles = computed(() =>

@@ -24,7 +24,7 @@
     NODE_HEIGHT,
     DURATION,
     GRID_SPACING
-  } = useConstants()
+  } = getConstants()
 
   const fitViewParams: FitViewParams = {
     duration: DURATION.FIT_VIEW,

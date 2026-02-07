@@ -39,7 +39,7 @@
     return `${totalIssueCount.value} issue${totalIssueCount.value > 1 ? 's' : ''}`
   })
 
-  const { NODE_HEIGHT, NODE_WIDTH } = useConstants()
+  const { NODE_HEIGHT, NODE_WIDTH } = getConstants()
 
   const focusNode = (nodeId: string | undefined) => {
     if (!nodeId) return
