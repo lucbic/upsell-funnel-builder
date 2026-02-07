@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { defineComponent, h } from 'vue'
-import BuilderPanelNode from '~/components/BuilderPanel/Node.vue'
+import BuilderPanelNode from '~/components/builder-panel/Node.vue'
 
 vi.mock('@vue-flow/core', () => {
   const HandleStub = defineComponent({

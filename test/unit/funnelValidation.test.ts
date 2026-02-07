@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { useNodeTypeConfig } from '~/utils/nodeConfigs'
+import { getNodeTypeConfig } from '~/utils/nodeConfigs'
 import {
   validateEmptyFunnel,
   validateMissingEntryPoint,
@@ -25,7 +25,7 @@ import {
 import { findIssue } from '../helpers/validationHelpers'
 
 beforeAll(() => {
-  vi.stubGlobal('useNodeTypeConfig', useNodeTypeConfig)
+  vi.stubGlobal('getNodeTypeConfig', getNodeTypeConfig)
 })
 
 const ctx = (

@@ -15,7 +15,7 @@ import {
   type Ref,
   type ComputedRef
 } from 'vue'
-import ValidationPane from '~/components/BuilderPanel/ValidationPane.vue'
+import ValidationPane from '~/components/builder-panel/ValidationPane.vue'
 
 const mockSetCenter = vi.fn()
 const mockAddSelectedNodes = vi.fn()

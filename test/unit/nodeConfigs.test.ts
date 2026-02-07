@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { useNodeTypeConfig } from '~/utils/nodeConfigs'
-import { useConstants } from '~/utils/constants'
+import { getNodeTypeConfig } from '~/utils/nodeConfigs'
+import { getConstants } from '~/utils/constants'
 
 describe('constants', () => {
   const {
     NODE_WIDTH,
     NODE_HEIGHT,
     KEYBOARD_INSERT_NODE_GAP
-  } = useConstants()
+  } = getConstants()
 
   it('returns NODE_WIDTH=200', () => {
     expect(NODE_WIDTH).toBe(200)
@@ -22,8 +22,8 @@ describe('constants', () => {
   })
 })
 
-describe('useNodeTypeConfig', () => {
-  const config = useNodeTypeConfig()
+describe('getNodeTypeConfig', () => {
+  const config = getNodeTypeConfig()
 
   it('returns all 5 node types', () => {
     expect(Object.keys(config)).toHaveLength(5)

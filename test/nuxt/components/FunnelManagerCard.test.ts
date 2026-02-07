@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import FunnelManagerCard from '~/components/FunnelManager/Card.vue'
+import FunnelManagerCard from '~/components/funnel-manager/Card.vue'
 
 const baseItem: Funnel.FunnelListItem = {
   id: 'funnel-1',
