@@ -9,8 +9,7 @@ import {
   validateUnreachableNodes,
   validateMultipleEntryPoints,
   validateIncompleteOfferPaths,
-  validateFunnel,
-  type FunnelValidationContext
+  validateFunnel
 } from '~/utils/funnelValidation'
 import {
   createSalesPageNode,
@@ -29,8 +28,8 @@ beforeAll(() => {
 })
 
 const ctx = (
-  overrides: Partial<FunnelValidationContext> = {}
-): FunnelValidationContext => ({
+  overrides: Partial<Validation.FunnelContext> = {}
+): Validation.FunnelContext => ({
   nodes: overrides.nodes ?? [],
   edges: overrides.edges ?? []
 })

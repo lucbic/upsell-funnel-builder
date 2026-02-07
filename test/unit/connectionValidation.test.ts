@@ -12,10 +12,7 @@ import {
   noDuplicateConnection,
   maxIncomingEdges,
   handleMaxOneEdge,
-  getConnectionValidator,
-  type ValidationContext,
-  type ResolvedValidationContext,
-  type Validator
+  getConnectionValidator
 } from '~/utils/connectionValidation'
 import {
   createSalesPageNode,
@@ -34,8 +31,8 @@ beforeAll(() => {
 })
 
 const buildContext = (
-  overrides: Partial<ValidationContext> = {}
-): ValidationContext => ({
+  overrides: Partial<Validation.ConnectionContext> = {}
+): Validation.ConnectionContext => ({
   connection: overrides.connection ?? createConnection('a', 'b'),
   nodes: overrides.nodes ?? [],
   edges: overrides.edges ?? [],
@@ -44,8 +41,8 @@ const buildContext = (
 })
 
 const buildResolvedContext = (
-  overrides: Partial<ValidationContext> & Pick<ResolvedValidationContext, 'sourceNode' | 'targetNode'>
-): ResolvedValidationContext => ({
+  overrides: Partial<Validation.ConnectionContext> & Pick<Validation.ResolvedConnectionContext, 'sourceNode' | 'targetNode'>
+): Validation.ResolvedConnectionContext => ({
   connection: overrides.connection ?? createConnection('a', 'b'),
   nodes: overrides.nodes ?? [],
   edges: overrides.edges ?? [],
@@ -55,18 +52,18 @@ const buildResolvedContext = (
 
 describe('composeValidators', () => {
   it('returns valid when all validators pass', () => {
-    const pass: Validator = () => ({ valid: true })
+    const pass: Validation.ConnectionValidator = () => ({ valid: true })
     const composed = composeValidators(pass, pass, pass)
     const result = composed(buildContext())
     expectValid(result)
   })
 
   it('short-circuits on first failure', () => {
-    const fail: Validator = () => ({
+    const fail: Validation.ConnectionValidator = () => ({
       valid: false,
       error: 'first error'
     })
-    const neverCalled = vi.fn<Validator>(() => ({
+    const neverCalled = vi.fn<Validation.ConnectionValidator>(() => ({
       valid: true
     }))
 
@@ -78,8 +75,8 @@ describe('composeValidators', () => {
   })
 
   it('returns error message from failing validator', () => {
-    const pass: Validator = () => ({ valid: true })
-    const fail: Validator = () => ({
+    const pass: Validation.ConnectionValidator = () => ({ valid: true })
+    const fail: Validation.ConnectionValidator = () => ({
       valid: false,
       error: 'specific error'
     })

@@ -3,11 +3,6 @@ import type {
   Edge as VFEdge,
   Connection as VFConnection
 } from '@vue-flow/core'
-import type {
-  ValidationResult,
-  ValidationContext
-} from '~/utils/connectionValidation'
-
 import { getConnectionValidator } from '~/utils/connectionValidation'
 
 export const useFunnelCanvasStore = defineStore(
@@ -115,8 +110,8 @@ export const useFunnelCanvasStore = defineStore(
 
     const validateConnection = (
       connection: VFConnection
-    ): ValidationResult => {
-      const context: ValidationContext = {
+    ): Validation.ConnectionResult => {
+      const context: Validation.ConnectionContext = {
         connection,
         nodes: nodes.value,
         edges: edges.value

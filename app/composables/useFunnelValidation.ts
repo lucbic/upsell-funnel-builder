@@ -1,13 +1,9 @@
-import type {
-  FunnelValidationResult,
-  FunnelValidationIssue
-} from '~/utils/funnelValidation'
 import { validateFunnel } from '~/utils/funnelValidation'
 
 export const useFunnelValidation = () => {
   const store = useFunnelCanvasStore()
 
-  const validationResult = computed<FunnelValidationResult>(
+  const validationResult = computed<Validation.FunnelResult>(
     () =>
       validateFunnel({
         nodes: store.nodes,
@@ -37,7 +33,7 @@ export const useFunnelValidation = () => {
     () => errors.value.length + warnings.value.length
   )
 
-  const allIssues = computed<FunnelValidationIssue[]>(
+  const allIssues = computed<Validation.FunnelIssue[]>(
     () => [...errors.value, ...warnings.value]
   )
 

@@ -3,36 +3,9 @@ import type {
   Edge as VFEdge
 } from '@vue-flow/core'
 
-export type ValidationSeverity = 'error' | 'warning'
-
-/** A single validation problem found in the funnel graph. */
-export type FunnelValidationIssue = {
-  id: string
-  severity: ValidationSeverity
-  message: string
-  nodeId?: string
-  nodeName?: string
-}
-
-/**
- * Aggregated validation result. `isValid` reflects errors only —
- * a funnel with warnings but no errors is still considered valid.
- */
-export type FunnelValidationResult = {
-  isValid: boolean
-  errors: FunnelValidationIssue[]
-  warnings: FunnelValidationIssue[]
-}
-
-/** Read-only snapshot of the funnel graph passed to each validator. */
-export type FunnelValidationContext = {
-  nodes: VFNode<Funnel.NodeData>[]
-  edges: VFEdge[]
-}
-
 type FunnelValidator = (
-  context: FunnelValidationContext
-) => FunnelValidationIssue[]
+  context: Validation.FunnelContext
+) => Validation.FunnelIssue[]
 
 const getNodeName = (node: VFNode<Funnel.NodeData>) =>
   node.data?.title ?? node.id
@@ -128,7 +101,7 @@ export const validateOrphanNodes: FunnelValidator = ({
   nodes,
   edges
 }) => {
-  const issues: FunnelValidationIssue[] = []
+  const issues: Validation.FunnelIssue[] = []
   const sourceIds = new Set(edges.map(e => e.source))
   const targetIds = new Set(edges.map(e => e.target))
 
@@ -154,7 +127,7 @@ export const validateDeadEndNodes: FunnelValidator = ({
   nodes,
   edges
 }) => {
-  const issues: FunnelValidationIssue[] = []
+  const issues: Validation.FunnelIssue[] = []
   const terminalTypes: Funnel.NodeType[] = ['thank-you']
 
   const sourceIds = new Set(edges.map(e => e.source))
@@ -185,7 +158,7 @@ export const validateUnreachableNodes: FunnelValidator = ({
   nodes,
   edges
 }) => {
-  const issues: FunnelValidationIssue[] = []
+  const issues: Validation.FunnelIssue[] = []
   const entryNodes = nodes.filter(
     n => n.type === 'sales-page'
   )
@@ -240,7 +213,7 @@ export const validateMultipleEntryPoints: FunnelValidator =
  */
 export const validateIncompleteOfferPaths: FunnelValidator =
   ({ nodes, edges }) => {
-    const issues: FunnelValidationIssue[] = []
+    const issues: Validation.FunnelIssue[] = []
     const nodeTypeConfig = getNodeTypeConfig()
 
     const edgesBySource = new Map<string, VFEdge[]>()
@@ -301,10 +274,10 @@ const warningValidators: FunnelValidator[] = [
  * `isValid` is true when there are zero errors — warnings alone don't block validity.
  */
 export const validateFunnel = (
-  context: FunnelValidationContext
-): FunnelValidationResult => {
-  const errors: FunnelValidationIssue[] = []
-  const warnings: FunnelValidationIssue[] = []
+  context: Validation.FunnelContext
+): Validation.FunnelResult => {
+  const errors: Validation.FunnelIssue[] = []
+  const warnings: Validation.FunnelIssue[] = []
 
   for (const validator of errorValidators) {
     errors.push(...validator(context))

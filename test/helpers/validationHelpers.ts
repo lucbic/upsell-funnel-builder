@@ -1,14 +1,12 @@
 import { expect } from 'vitest'
-import type { ValidationResult } from '~/utils/connectionValidation'
-import type { FunnelValidationIssue } from '~/utils/funnelValidation'
 
-export const expectValid = (result: ValidationResult) => {
+export const expectValid = (result: Validation.ConnectionResult) => {
   expect(result.valid).toBe(true)
   expect(result.error).toBeUndefined()
 }
 
 export const expectInvalid = (
-  result: ValidationResult,
+  result: Validation.ConnectionResult,
   errorSubstring: string
 ) => {
   expect(result.valid).toBe(false)
@@ -19,6 +17,6 @@ export const expectInvalid = (
 }
 
 export const findIssue = (
-  issues: FunnelValidationIssue[],
+  issues: Validation.FunnelIssue[],
   idPrefix: string
 ) => issues.find(i => i.id.startsWith(idPrefix))

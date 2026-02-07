@@ -1,41 +1,6 @@
-import type { Node, Edge, Connection } from '@vue-flow/core'
-
-export type ValidationResult = {
-  valid: boolean
-  error?: string
-}
-
-/**
- * Mutable context threaded through the validator pipeline.
- * `sourceNode` and `targetNode` start undefined and are populated
- * by the `sourceNodeExists` / `targetNodeExists` validators —
- * later validators in the chain can safely read them.
- */
-export type ValidationContext = {
-  connection: Connection
-  nodes: Node<Funnel.NodeData>[]
-  edges: Edge[]
-  sourceNode?: Node<Funnel.NodeData>
-  targetNode?: Node<Funnel.NodeData>
-}
-
-export type Validator<
-  C extends ValidationContext = ValidationContext
-> = (context: C) => ValidationResult
-
-/**
- * Context after node resolution — `sourceNode` and `targetNode`
- * are guaranteed to be defined by the resolve phase.
- */
-export type ResolvedValidationContext =
-  ValidationContext & {
-    sourceNode: Node<Funnel.NodeData>
-    targetNode: Node<Funnel.NodeData>
-  }
-
 const invalidConnection = (
   error: string
-): ValidationResult => ({
+): Validation.ConnectionResult => ({
   valid: false,
   error
 })
@@ -46,10 +11,10 @@ const invalidConnection = (
  * so execution order matters.
  */
 export const composeValidators = <
-  C extends ValidationContext = ValidationContext
+  C extends Validation.ConnectionContext = Validation.ConnectionContext
 >(
-  ...validators: Validator<C>[]
-): Validator<C> => {
+  ...validators: Validation.ConnectionValidator<C>[]
+): Validation.ConnectionValidator<C> => {
   return context => {
     for (const validator of validators) {
       const result = validator(context)
@@ -61,7 +26,7 @@ export const composeValidators = <
   }
 }
 
-export const sourceNodeExists: Validator = context => {
+export const sourceNodeExists: Validation.ConnectionValidator = context => {
   const sourceNode = context.nodes.find(
     n => n.id === context.connection.source
   )
@@ -74,7 +39,7 @@ export const sourceNodeExists: Validator = context => {
   return { valid: true }
 }
 
-export const targetNodeExists: Validator = context => {
+export const targetNodeExists: Validation.ConnectionValidator = context => {
   const targetNode = context.nodes.find(
     n => n.id === context.connection.target
   )
@@ -87,7 +52,7 @@ export const targetNodeExists: Validator = context => {
   return { valid: true }
 }
 
-export const noSelfConnection: Validator = context => {
+export const noSelfConnection: Validation.ConnectionValidator = context => {
   if (
     context.connection.source === context.connection.target
   ) {
@@ -99,8 +64,8 @@ export const noSelfConnection: Validator = context => {
   return { valid: true }
 }
 
-export const thankYouNoOutgoing: Validator<
-  ResolvedValidationContext
+export const thankYouNoOutgoing: Validation.ConnectionValidator<
+  Validation.ResolvedConnectionContext
 > = context => {
   if (context.sourceNode.type === 'thank-you') {
     return invalidConnection(
@@ -111,8 +76,8 @@ export const thankYouNoOutgoing: Validator<
   return { valid: true }
 }
 
-export const salesPageTarget: Validator<
-  ResolvedValidationContext
+export const salesPageTarget: Validation.ConnectionValidator<
+  Validation.ResolvedConnectionContext
 > = context => {
   if (
     context.sourceNode.type === 'sales-page' &&
@@ -126,8 +91,8 @@ export const salesPageTarget: Validator<
   return { valid: true }
 }
 
-export const salesPageMaxConnections: Validator<
-  ResolvedValidationContext
+export const salesPageMaxConnections: Validation.ConnectionValidator<
+  Validation.ResolvedConnectionContext
 > = context => {
   if (context.sourceNode.type === 'sales-page') {
     const existingEdges = context.edges.filter(
@@ -146,7 +111,7 @@ export const salesPageMaxConnections: Validator<
   return { valid: true }
 }
 
-export const noDuplicateConnection: Validator = context => {
+export const noDuplicateConnection: Validation.ConnectionValidator = context => {
   const duplicate = context.edges.find(
     e =>
       e.source === context.connection.source &&
@@ -161,7 +126,7 @@ export const noDuplicateConnection: Validator = context => {
   return { valid: true }
 }
 
-export const noSourceToSource: Validator = context => {
+export const noSourceToSource: Validation.ConnectionValidator = context => {
   if (context.connection.targetHandle)
     return invalidConnection(
       'Cannot connect to an output handle'
@@ -174,8 +139,8 @@ export const noSourceToSource: Validator = context => {
  * Config-driven incoming edge limit per node type.
  * `maxIncomingEdges: undefined` = unlimited, `0` = no incoming allowed.
  */
-export const maxIncomingEdges: Validator<
-  ResolvedValidationContext
+export const maxIncomingEdges: Validation.ConnectionValidator<
+  Validation.ResolvedConnectionContext
 > = context => {
   const nodeTypeConfig = getNodeTypeConfig()
   const targetType = context.targetNode
@@ -204,7 +169,7 @@ export const maxIncomingEdges: Validator<
  * node-level edge limits — a node with two handles can still have two edges,
  * but each handle can only drive one connection.
  */
-export const handleMaxOneEdge: Validator = context => {
+export const handleMaxOneEdge: Validation.ConnectionValidator = context => {
   const { sourceHandle } = context.connection
   if (!sourceHandle) return { valid: true }
 
@@ -227,13 +192,13 @@ export const handleMaxOneEdge: Validator = context => {
  * `sourceNode` and `targetNode`; the validate phase runs with compile-time
  * guarantees that both fields are defined.
  */
-export const getConnectionValidator = (): Validator => {
+export const getConnectionValidator = (): Validation.ConnectionValidator => {
   const resolve = composeValidators(
     sourceNodeExists,
     targetNodeExists
   )
   const validate =
-    composeValidators<ResolvedValidationContext>(
+    composeValidators<Validation.ResolvedConnectionContext>(
       noSelfConnection,
       noSourceToSource,
       thankYouNoOutgoing,
@@ -247,6 +212,6 @@ export const getConnectionValidator = (): Validator => {
   return context => {
     const resolveResult = resolve(context)
     if (!resolveResult.valid) return resolveResult
-    return validate(context as ResolvedValidationContext)
+    return validate(context as Validation.ResolvedConnectionContext)
   }
 }
