@@ -30,7 +30,7 @@ bun run typecheck  # TypeScript type checking
 - **Nuxt UI + Tailwind 4** for the interface and styling - Provides a consistent easy-to-use component library and utility-first styling without custom CSS overhead.
 - **SCSS custom styling** - SCSS is used for custom styling throughout the app.Sometimes writing complex utility classes for edge cases is just too cumbersome, so SCSS for the win.
 - **Vue Flow** for the graph canvas - Mature, vue-native library for node-based editors. Handles zoom, pan, drag and edge routing out of the box.
-- **Pinia for state management** - All funnel state (nodes, edges, metadata) lives in a single `useFunnelStore`. Persistence is handled via `localStorage` with auto-save.
+- **Pinia for state management** - All funnel state (nodes, edges, metadata) lives in a single `funnelCanvasStore`. Persistence is handled via `localStorage` with auto-save by `funnelPersistenceStore`.
 
 ## Tradeoffs & What I'd Improve Next
 
