@@ -9,6 +9,18 @@
   const managerOpen = ref(false)
 
   const { isDesktop } = useDevice()
+  const mobileDrag = useMobileDrag()
+
+  watch(
+    () => mobileDrag.isDragging.value,
+    (dragging) => {
+      if (dragging) {
+        useTimeoutFn(() => {
+          paletteOpen.value = false
+        }, 50)
+      }
+    }
+  )
 
   const blurActiveElement = () => {
     if (document.activeElement instanceof HTMLElement) {

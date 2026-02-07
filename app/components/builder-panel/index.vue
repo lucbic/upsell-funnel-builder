@@ -45,6 +45,33 @@
 
   const store = useFunnelCanvasStore()
   const toast = useToast()
+  const mobileDrag = useMobileDrag()
+
+  const dropNodeAt = (
+    type: Funnel.NodeType,
+    screenX: number,
+    screenY: number
+  ) => {
+    const { x, y } = screenToFlowCoordinate({
+      x: screenX,
+      y: screenY
+    })
+
+    store.createNode(type, {
+      x: x - NODE_WIDTH / 2,
+      y: y - NODE_HEIGHT / 2
+    })
+  }
+
+  watch(
+    () => mobileDrag.pendingDrop.value,
+    (drop) => {
+      if (!drop) return
+      const consumed = mobileDrag.consumeDrop()
+      if (!consumed) return
+      dropNodeAt(consumed.nodeType, consumed.x, consumed.y)
+    }
+  )
 
   onConnect((connection: VFConnection) => {
     const validation = store.validateConnection(connection)
@@ -108,17 +135,7 @@
 
     if (!nodeType) return
 
-    const flowPosition = screenToFlowCoordinate({
-      x: event.clientX,
-      y: event.clientY
-    })
-
-    const centeredPosition = {
-      x: flowPosition.x - NODE_WIDTH / 2,
-      y: flowPosition.y - NODE_HEIGHT / 2
-    }
-
-    store.createNode(nodeType, centeredPosition)
+    dropNodeAt(nodeType, event.clientX, event.clientY)
   }
 
   watch(
