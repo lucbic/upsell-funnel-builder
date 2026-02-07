@@ -123,13 +123,15 @@
 
   watch(
     () => store.currentFunnelId,
-    async () => {
+    () => {
       // NextTick didn't do the trick here, so we're using a timeout to schedule a macrotask in the event loop ¯\_(ツ)_/¯
-      await wait(0)
-      fitView(fitViewParams)
-      await wait(DURATION.LOADING_DELAY)
+      useTimeoutFn(() => {
+        fitView(fitViewParams)
 
-      store.isLoading = false
+        useTimeoutFn(() => {
+          store.isLoading = false
+        }, DURATION.LOADING_DELAY)
+      }, 0)
     }
   )
 
