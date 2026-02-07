@@ -14,6 +14,7 @@ import {
   handleMaxOneEdge,
   getConnectionValidator,
   type ValidationContext,
+  type ResolvedValidationContext,
   type Validator
 } from '~/utils/connectionValidation'
 import {
@@ -35,6 +36,16 @@ beforeAll(() => {
 const buildContext = (
   overrides: Partial<ValidationContext> = {}
 ): ValidationContext => ({
+  connection: overrides.connection ?? createConnection('a', 'b'),
+  nodes: overrides.nodes ?? [],
+  edges: overrides.edges ?? [],
+  sourceNode: overrides.sourceNode,
+  targetNode: overrides.targetNode
+})
+
+const buildResolvedContext = (
+  overrides: Partial<ValidationContext> & Pick<ResolvedValidationContext, 'sourceNode' | 'targetNode'>
+): ResolvedValidationContext => ({
   connection: overrides.connection ?? createConnection('a', 'b'),
   nodes: overrides.nodes ?? [],
   edges: overrides.edges ?? [],
@@ -181,15 +192,17 @@ describe('noSourceToSource', () => {
 
 describe('thankYouNoOutgoing', () => {
   it('passes for non-thank-you source', () => {
-    const ctx = buildContext({
-      sourceNode: createSalesPageNode()
+    const ctx = buildResolvedContext({
+      sourceNode: createSalesPageNode(),
+      targetNode: createOrderPageNode()
     })
     expectValid(thankYouNoOutgoing(ctx))
   })
 
   it('fails for thank-you source', () => {
-    const ctx = buildContext({
-      sourceNode: createThankYouNode()
+    const ctx = buildResolvedContext({
+      sourceNode: createThankYouNode(),
+      targetNode: createOrderPageNode()
     })
     expectInvalid(
       thankYouNoOutgoing(ctx),
@@ -200,7 +213,7 @@ describe('thankYouNoOutgoing', () => {
 
 describe('salesPageTarget', () => {
   it('passes for sales→order', () => {
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: createSalesPageNode(),
       targetNode: createOrderPageNode()
     })
@@ -208,7 +221,7 @@ describe('salesPageTarget', () => {
   })
 
   it('fails for sales→upsell', () => {
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: createSalesPageNode(),
       targetNode: createUpsellNode()
     })
@@ -216,7 +229,7 @@ describe('salesPageTarget', () => {
   })
 
   it('fails for sales→downsell', () => {
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: createSalesPageNode(),
       targetNode: createDownsellNode()
     })
@@ -224,7 +237,7 @@ describe('salesPageTarget', () => {
   })
 
   it('fails for sales→thank-you', () => {
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: createSalesPageNode(),
       targetNode: createThankYouNode()
     })
@@ -232,7 +245,7 @@ describe('salesPageTarget', () => {
   })
 
   it('passes for non-sales source', () => {
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: createOrderPageNode(),
       targetNode: createUpsellNode()
     })
@@ -243,8 +256,9 @@ describe('salesPageTarget', () => {
 describe('salesPageMaxConnections', () => {
   it('passes when 0 existing edges', () => {
     const sp = createSalesPageNode()
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: sp,
+      targetNode: createOrderPageNode(),
       edges: []
     })
     expectValid(salesPageMaxConnections(ctx))
@@ -252,8 +266,9 @@ describe('salesPageMaxConnections', () => {
 
   it('fails when ≥1 existing outgoing edge', () => {
     const sp = createSalesPageNode()
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: sp,
+      targetNode: createOrderPageNode(),
       edges: [createEdge(sp.id, 'op-1')]
     })
     expectInvalid(
@@ -264,8 +279,9 @@ describe('salesPageMaxConnections', () => {
 
   it('passes for non-sales source', () => {
     const op = createOrderPageNode()
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       sourceNode: op,
+      targetNode: createUpsellNode(),
       edges: [createEdge(op.id, 'us-1'), createEdge(op.id, 'ds-1')]
     })
     expectValid(salesPageMaxConnections(ctx))
@@ -309,8 +325,9 @@ describe('noDuplicateConnection', () => {
 describe('maxIncomingEdges', () => {
   it('enforces sales-page maxIncoming=0', () => {
     const sp = createSalesPageNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createOrderPageNode({ id: 'a' }),
       targetNode: sp,
       edges: []
     })
@@ -319,8 +336,9 @@ describe('maxIncomingEdges', () => {
 
   it('enforces order-page maxIncoming=1', () => {
     const op = createOrderPageNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createSalesPageNode({ id: 'a' }),
       targetNode: op,
       edges: [createEdge('existing', 'target')]
     })
@@ -329,8 +347,9 @@ describe('maxIncomingEdges', () => {
 
   it('allows order-page when no existing incoming', () => {
     const op = createOrderPageNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createSalesPageNode({ id: 'a' }),
       targetNode: op,
       edges: []
     })
@@ -339,8 +358,9 @@ describe('maxIncomingEdges', () => {
 
   it('allows unlimited for upsell', () => {
     const us = createUpsellNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createOrderPageNode({ id: 'a' }),
       targetNode: us,
       edges: [
         createEdge('x', 'target'),
@@ -353,8 +373,9 @@ describe('maxIncomingEdges', () => {
 
   it('allows unlimited for downsell', () => {
     const ds = createDownsellNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createOrderPageNode({ id: 'a' }),
       targetNode: ds,
       edges: [
         createEdge('x', 'target'),
@@ -366,8 +387,9 @@ describe('maxIncomingEdges', () => {
 
   it('provides contextual error for 0 max', () => {
     const sp = createSalesPageNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createOrderPageNode({ id: 'a' }),
       targetNode: sp,
       edges: []
     })
@@ -378,8 +400,9 @@ describe('maxIncomingEdges', () => {
 
   it('provides contextual error for max=1', () => {
     const op = createOrderPageNode({ id: 'target' })
-    const ctx = buildContext({
+    const ctx = buildResolvedContext({
       connection: createConnection('a', 'target'),
+      sourceNode: createSalesPageNode({ id: 'a' }),
       targetNode: op,
       edges: [createEdge('existing', 'target')]
     })

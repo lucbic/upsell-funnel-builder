@@ -19,9 +19,18 @@ export type ValidationContext = {
   targetNode?: Node<Funnel.NodeData>
 }
 
-export type Validator = (
-  context: ValidationContext
+export type Validator<C extends ValidationContext = ValidationContext> = (
+  context: C
 ) => ValidationResult
+
+/**
+ * Context after node resolution — `sourceNode` and `targetNode`
+ * are guaranteed to be defined by the resolve phase.
+ */
+export type ResolvedValidationContext = ValidationContext & {
+  sourceNode: Node<Funnel.NodeData>
+  targetNode: Node<Funnel.NodeData>
+}
 
 const invalidConnection = (
   error: string
@@ -35,9 +44,9 @@ const invalidConnection = (
  * Validators may mutate the shared context (e.g. populating `sourceNode`),
  * so execution order matters.
  */
-export const composeValidators = (
-  ...validators: Validator[]
-): Validator => {
+export const composeValidators = <C extends ValidationContext = ValidationContext>(
+  ...validators: Validator<C>[]
+): Validator<C> => {
   return context => {
     for (const validator of validators) {
       const result = validator(context)
@@ -87,8 +96,8 @@ export const noSelfConnection: Validator = context => {
   return { valid: true }
 }
 
-export const thankYouNoOutgoing: Validator = context => {
-  if (context.sourceNode?.type === 'thank-you') {
+export const thankYouNoOutgoing: Validator<ResolvedValidationContext> = context => {
+  if (context.sourceNode.type === 'thank-you') {
     return invalidConnection(
       'Thank You pages cannot have outgoing connections'
     )
@@ -97,10 +106,10 @@ export const thankYouNoOutgoing: Validator = context => {
   return { valid: true }
 }
 
-export const salesPageTarget: Validator = context => {
+export const salesPageTarget: Validator<ResolvedValidationContext> = context => {
   if (
-    context.sourceNode?.type === 'sales-page' &&
-    context.targetNode?.type !== 'order-page'
+    context.sourceNode.type === 'sales-page' &&
+    context.targetNode.type !== 'order-page'
   ) {
     return invalidConnection(
       'Sales Page can only connect to Order Page'
@@ -110,11 +119,11 @@ export const salesPageTarget: Validator = context => {
   return { valid: true }
 }
 
-export const salesPageMaxConnections: Validator =
+export const salesPageMaxConnections: Validator<ResolvedValidationContext> =
   context => {
-    if (context.sourceNode?.type === 'sales-page') {
+    if (context.sourceNode.type === 'sales-page') {
       const existingEdges = context.edges.filter(
-        e => e.source === context.sourceNode?.id
+        e => e.source === context.sourceNode.id
       )
 
       if (existingEdges.length >= 1) {
@@ -157,9 +166,9 @@ export const noSourceToSource: Validator = context => {
  * Config-driven incoming edge limit per node type.
  * `maxIncomingEdges: undefined` = unlimited, `0` = no incoming allowed.
  */
-export const maxIncomingEdges: Validator = context => {
+export const maxIncomingEdges: Validator<ResolvedValidationContext> = context => {
   const nodeTypeConfig = getNodeTypeConfig()
-  const targetType = context.targetNode?.type as Funnel.NodeType
+  const targetType = context.targetNode.type as Funnel.NodeType
   const config = nodeTypeConfig[targetType]
   const max = config?.maxIncomingEdges
 
@@ -203,13 +212,13 @@ export const handleMaxOneEdge: Validator = context => {
 }
 
 /**
- * Returns the composed connection validator. Order matters: `sourceNodeExists`
- * and `targetNodeExists` run first to populate the context for downstream validators.
+ * Returns the composed connection validator. The resolve phase populates
+ * `sourceNode` and `targetNode`; the validate phase runs with compile-time
+ * guarantees that both fields are defined.
  */
-export const getConnectionValidator = () =>
-  composeValidators(
-    sourceNodeExists,
-    targetNodeExists,
+export const getConnectionValidator = (): Validator => {
+  const resolve = composeValidators(sourceNodeExists, targetNodeExists)
+  const validate = composeValidators<ResolvedValidationContext>(
     noSelfConnection,
     noSourceToSource,
     thankYouNoOutgoing,
@@ -219,3 +228,10 @@ export const getConnectionValidator = () =>
     maxIncomingEdges,
     handleMaxOneEdge
   )
+
+  return context => {
+    const resolveResult = resolve(context)
+    if (!resolveResult.valid) return resolveResult
+    return validate(context as ResolvedValidationContext)
+  }
+}
