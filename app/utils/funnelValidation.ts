@@ -253,7 +253,7 @@ export const validateIncompleteOfferPaths: FunnelValidator =
     for (const node of nodes) {
       const config =
         nodeTypeConfig[node.type as Funnel.NodeType]
-      if (!config?.handles) continue
+      if (!config.handles) continue
 
       const nodeEdges = edgesBySource.get(node.id) ?? []
 
