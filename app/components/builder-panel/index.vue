@@ -43,7 +43,7 @@
     onInit
   } = useVueFlow()
 
-  const store = useFunnelStore()
+  const store = useFunnelCanvasStore()
   const toast = useToast()
 
   onConnect((connection: VFConnection) => {

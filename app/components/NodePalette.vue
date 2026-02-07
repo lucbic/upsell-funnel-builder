@@ -1,7 +1,7 @@
 <script setup lang="ts">
   const nodeTypes = getNodeTypeConfig()
 
-  const store = useFunnelStore()
+  const store = useFunnelCanvasStore()
 
   const onDragStart = (
     event: DragEvent,

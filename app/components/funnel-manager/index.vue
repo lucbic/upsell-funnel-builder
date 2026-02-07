@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  const funnel = useFunnelStore()
+  const funnel = useFunnelCanvasStore()
+  const persistence = useFunnelPersistenceStore()
   const fileInput =
     useTemplateRef<HTMLInputElement>('fileInput')
 
@@ -12,7 +13,7 @@
     const file = input.files?.[0]
 
     if (file) {
-      funnel.importFunnel(file)
+      persistence.importFunnel(file)
     }
 
     input.value = ''
@@ -29,7 +30,7 @@
         block
         icon="i-lucide-file-plus"
         variant="soft"
-        @click="funnel.createNewFunnel(true)"
+        @click="persistence.createNewFunnel(true)"
       >
         New Funnel
       </UButton>
@@ -40,7 +41,7 @@
           icon="i-lucide-download"
           variant="subtle"
           color="neutral"
-          @click="funnel.exportFunnel"
+          @click="persistence.exportFunnel"
         >
           Export
         </UButton>
@@ -83,7 +84,7 @@
           </h1>
 
           <UEmpty
-            v-if="funnel.savedFunnels.length === 0"
+            v-if="persistence.savedFunnels.length === 0"
             icon="i-lucide-folder"
             title="No saved funnels"
             description="Your funnels will appear here once you start building"
@@ -91,13 +92,13 @@
 
           <div v-else class="flex-1">
             <FunnelManagerCard
-              v-for="item in funnel.savedFunnels"
+              v-for="item in persistence.savedFunnels"
               class="mb-2"
               :key="item.id"
               :item="item"
               :is-current="isCurrentFunnel(item.id)"
-              @select="funnel.loadFunnel"
-              @delete="funnel.deleteFunnel"
+              @select="persistence.loadFunnel"
+              @delete="persistence.deleteFunnel"
             />
           </div>
         </div>
