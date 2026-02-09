@@ -22,6 +22,10 @@ bun run test       # run tests (vitest)
 bun run typecheck  # TypeScript type checking
 ```
 
+## Live Preview
+
+https://upsell-funnel-builder.onrender.com/
+
 ## Architecture Decisions
 
 - **Nuxt 4** — Vue 3 + Nuxt 4 is state-of-the-art for building web apps. Its development experience is fantastic, it's very flexible and expandable, and it has proved to be even more reliable than Next.js, considering its recent security vulnerabilities incident. It also happens to be the framework I'm most familiar with, so it was the natural choice for this project.
